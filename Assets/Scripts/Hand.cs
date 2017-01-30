@@ -22,6 +22,9 @@ public class Hand : MonoBehaviour {
 
 	public Transform m_dartParent;
 
+	public Transform[]
+	m_handStates;
+
 	private GameObject m_currentDart  = null;
 
 	private State m_state = State.Moving;
@@ -46,9 +49,13 @@ public class Hand : MonoBehaviour {
 
 		case State.Moving:
 			m_anim ["Hand_Movement01"].speed = Random.Range (m_minSpeed, m_maxSpeed);
+			m_handStates [0].gameObject.SetActive (true);
+			m_handStates [1].gameObject.SetActive (false);
 			break;
 		case State.Waiting:
 			m_anim ["Hand_Movement01"].speed = 0;
+			m_handStates [0].gameObject.SetActive (false);
+			m_handStates [1].gameObject.SetActive (true);
 			break;
 		}
 	}

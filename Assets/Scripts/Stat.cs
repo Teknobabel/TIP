@@ -7,6 +7,7 @@ public class Stat : ScriptableObject  {
 
 	public string m_name;
 	public Texture m_icon;
+	public Word.WordCategory m_category = Word.WordCategory.General;
 
 	public string[] m_winningStrings;
 	public string[] m_losingStrings;
@@ -22,7 +23,7 @@ public class Stat : ScriptableObject  {
 		m_currentScore = m_maxScore / 2;
 		s.m_stat = this;
 		m_ui.UpdateStatValue (m_currentScore);
-		Debug.Log (m_icon);
+//		Debug.Log (m_icon);
 		s.m_icon.texture = m_icon;
 
 	}

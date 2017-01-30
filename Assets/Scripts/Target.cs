@@ -20,6 +20,8 @@ public class Target : MonoBehaviour {
 
 	private State m_state = State.Inactive;
 
+	public Dartboard m_dartboard;
+
 	void Start ()
 	{
 		Renderer r = m_material.GetComponent<Renderer> ();
@@ -72,6 +74,7 @@ public class Target : MonoBehaviour {
 			r2.material.SetColor ("_Color", m_startingColor);
 			m_noun = null;
 			m_verb = null;
+			m_dartboard.m_resultText.gameObject.SetActive (false);
 
 			break;
 		}
@@ -95,8 +98,18 @@ public class Target : MonoBehaviour {
 			if (m_noun != null) {
 
 				MenuState_GameState.instance.SetNoun (m_noun);
+
+				m_dartboard.m_resultText.text = m_noun.m_targetName;
+				m_dartboard.m_resultText.gameObject.SetActive (true);
+				m_dartboard.m_resultText.GetComponent<Animation> ().Play ();
+
 			} else if (m_verb != null) {
+				
 				MenuState_GameState.instance.SetVerb (m_verb);
+
+				m_dartboard.m_resultText.text = m_verb.m_targetName;
+				m_dartboard.m_resultText.gameObject.SetActive (true);
+				m_dartboard.m_resultText.GetComponent<Animation> ().Play ();
 			}
 
 			if (m_state != State.Active) {

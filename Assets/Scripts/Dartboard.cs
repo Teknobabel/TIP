@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 using System.Collections.Generic;
 
 public class Dartboard : MonoBehaviour {
@@ -11,6 +12,8 @@ public class Dartboard : MonoBehaviour {
 	public Transform m_rotationParent;
 
 	public Animation m_targetFlipAnimation;
+
+	public TextMesh m_resultText;
 
 	// Use this for initialization
 	void Start () {

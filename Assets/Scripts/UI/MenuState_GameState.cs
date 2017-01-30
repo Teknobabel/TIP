@@ -29,63 +29,63 @@ public class MenuState_GameState : MenuState {
 		December,
 	}
 
-	public enum Verb
-	{
-		None,
-		TargetMiss,
-		Love,
-		Hate,
-		Worship,
-		Kill,
-		Import,
-		Export,
-		Destroy,
-		Seize,
-		Ban,
-		Bully,
-		Grope,
-		Fondle,
-		Dismiss,
-		DeclareWarOn,
-		SurrenderTo,
-		SpyOn,
-		Deport,
-	}
-
-	public enum Noun
-	{
-		None,
-		TargetMiss,
-		Whites,
-		Blacks,
-		Jews,
-		Mexicans,
-		USA,
-		Russia,
-		China,
-		Poor,
-		Rich,
-		Tacos,
-		Burritos,
-		Congress,
-		TheMedia,
-		Democracy,
-		Abortion,
-		Climate,
-		Fraud,
-		Debt,
-		Communism,
-		TheCyber,
-		Law,
-		Anarchy,
-		Dinosaurs,
-		Terrorists,
-		Facts,
-		Lies,
-		Science,
-		Women,
-		Emails,
-	}
+//	public enum Verb
+//	{
+//		None,
+//		TargetMiss,
+//		Love,
+//		Hate,
+//		Worship,
+//		Kill,
+//		Import,
+//		Export,
+//		Destroy,
+//		Seize,
+//		Ban,
+//		Bully,
+//		Grope,
+//		Fondle,
+//		Dismiss,
+//		DeclareWarOn,
+//		SurrenderTo,
+//		SpyOn,
+//		Deport,
+//	}
+//
+//	public enum Noun
+//	{
+//		None,
+//		TargetMiss,
+//		Whites,
+//		Blacks,
+//		Jews,
+//		Mexicans,
+//		USA,
+//		Russia,
+//		China,
+//		Poor,
+//		Rich,
+//		Tacos,
+//		Burritos,
+//		Congress,
+//		TheMedia,
+//		Democracy,
+//		Abortion,
+//		Climate,
+//		Fraud,
+//		Debt,
+//		Communism,
+//		TheCyber,
+//		Law,
+//		Anarchy,
+//		Dinosaurs,
+//		Terrorists,
+//		Facts,
+//		Lies,
+//		Science,
+//		Women,
+//		Emails,
+//	}
 
 	public Transform m_gameUI;
 
@@ -110,6 +110,8 @@ public class MenuState_GameState : MenuState {
 
 	public Animation
 	m_phone;
+
+	public TweetUI m_tweetHeader;
 
 	private List<Stat> m_stats = new List<Stat>();
 	private List<TweetUI> m_tweets = new List<TweetUI>();
@@ -151,6 +153,7 @@ public class MenuState_GameState : MenuState {
 			s.m_losingStrings = thisStat.m_losingStrings;
 			s.m_winningStrings = thisStat.m_winningStrings;
 			s.m_name = thisStat.m_name;
+			s.m_category = thisStat.m_category;
 
 			// create UI
 			GameObject uiOBJ = (GameObject) Instantiate(m_statOBJ, m_statPanel);
@@ -185,33 +188,32 @@ public class MenuState_GameState : MenuState {
 
 	public override void OnUpdate()
 	{
-		if (Input.GetKeyUp (KeyCode.Space) && m_playerInputAllowed) {
+		if (Input.GetKeyUp (KeyCode.Escape)) {
 
-			foreach (Hand h in m_hands) {
+			GameManager.instance.PushMenuState (State.Pause);
+		}
+		else if (Input.anyKeyDown) {
 
-				h.ThrowDart ();
+			if (m_phoneState == PhoneState.Up) {
+
+				TogglePhone ();
+
+			} else if (m_playerInputAllowed) {
+				
+				foreach (Hand h in m_hands) {
+
+					h.ThrowDart ();
 
 //				foreach (Dartboard d in m_dartboards) {
 //
 //					d.ToggleTargetFlip ();
 //				}
+				}
+
+				m_playerInputAllowed = false;
 			}
-
-			m_playerInputAllowed = false;
 		} 
-
-		if (Input.GetKeyUp (KeyCode.Escape)) {
-
-			GameManager.instance.PushMenuState (State.Pause);
-		}
-//		else if (Input.GetKeyUp (KeyCode.Space) && !m_playerInputAllowed) {
-//
-//			EndRound ();
-//
-//			StartRound ();
-//
-//			m_playerInputAllowed = true;
-//		}
+			
 	}
 
 	private void UpdateTimeLine ()
@@ -249,7 +251,7 @@ public class MenuState_GameState : MenuState {
 			}
 		}
 
-		m_dateText.text = GetDate (m_turnNumber);
+		m_dateText.text = GetDate (m_turnNumber).ToUpper();
 	}
 
 	private void StartRound ()
@@ -432,13 +434,20 @@ public class MenuState_GameState : MenuState {
 	{
 		// update retweet / fav counts on current tweets
 
+		if (m_tweetHeader.m_text.gameObject.activeSelf) {
+
+			m_tweetHeader.m_text.gameObject.SetActive (false);
+		}
+
 		foreach (TweetUI tUI in m_tweets) {
 
 			Tweet thisTweet = m_tweetList[tUI.m_ID];
 			tUI.Tweet (thisTweet);
 		}
 
+		yield return new WaitForSeconds (1.0f);
 
+		m_phoneState = PhoneState.Up;
 		m_phone.clip = m_phone.GetClip ("Phone_Raise01");
 		m_phone.Play ();
 
@@ -461,30 +470,99 @@ public class MenuState_GameState : MenuState {
 		m_tweetList.Add (m_currentTweet.m_id, m_currentTweet);
 		m_currentTweet = null;
 
-		int randStat = UnityEngine.Random.Range (0, m_stats.Count);
-		Stat thisStat = m_stats [randStat];
+		int incAmount = 20;
+		int amt = 0;
 
-		int amtChange = UnityEngine.Random.Range (-20, 20);
-		thisStat.UpdateValue (amtChange);
+		foreach (Word.Affinity af in m_currentNoun.m_affinities) {
 
-		if (amtChange > 0) {
+			Word.Affinity vAf = m_currentVerb.m_affinities [0];
 
-			thisStat.ui.SetColor (Color.green);
+			if (af.m_quality == Word.WordQuality.Negative && vAf.m_quality == Word.WordQuality.Negative) {
 
-		} else if (amtChange < 0) {
-			
-			thisStat.ui.SetColor (Color.red);
+				amt = incAmount;
+
+			} else if (af.m_quality == Word.WordQuality.Positive && vAf.m_quality == Word.WordQuality.Negative) {
+
+				amt = incAmount*-1;
+
+			} else if (af.m_quality == Word.WordQuality.Negative && vAf.m_quality == Word.WordQuality.Positive) {
+
+				amt = incAmount*-1;
+
+			} else if (af.m_quality == Word.WordQuality.Positive && vAf.m_quality == Word.WordQuality.Positive) {
+
+				amt = incAmount;
+
+			} else if (af.m_quality == Word.WordQuality.Positive) {
+
+				amt = incAmount;
+
+			} else if (af.m_quality == Word.WordQuality.Negative) {
+
+				amt = incAmount*-1;
+			}
+
+			if (amt != 0) {
+
+				foreach (Stat thisStat in m_stats) {
+
+					if (thisStat.m_category == af.m_category) {
+						
+						thisStat.UpdateValue (amt);
+
+						if (thisStat.currentScore == 0 || thisStat.currentScore == thisStat.maxScore) {
+							
+							GameOver (thisStat);
+							yield break;
+
+						} else {
+
+							if (amt > 0) {
+					
+								thisStat.ui.SetColor (Color.green);
+					
+							} else if (amt < 0) {
+								
+								thisStat.ui.SetColor (Color.red);
+							}
+
+						}
+
+						break;
+					}
+				}
+			}
 		}
 
+//		int randStat = UnityEngine.Random.Range (0, m_stats.Count);
+//		Stat thisStat = m_stats [randStat];
+//
+//		int amtChange = UnityEngine.Random.Range (-20, 20);
+//		thisStat.UpdateValue (amtChange);
+//
+//		if (amtChange > 0) {
+//
+//			thisStat.ui.SetColor (Color.green);
+//
+//		} else if (amtChange < 0) {
+//			
+//			thisStat.ui.SetColor (Color.red);
+//		}
+//
 		yield return new WaitForSeconds (1.0f);
 
-		// check for game over state
+		foreach (Stat thisStat in m_stats) {
 
-		if (thisStat.currentScore == 0 || thisStat.currentScore == thisStat.maxScore) {
-			
-			GameOver (thisStat);
-			yield break;
+			thisStat.ui.SetColor (Color.white);
 		}
+//
+//		// check for game over state
+//
+//		if (thisStat.currentScore == 0 || thisStat.currentScore == thisStat.maxScore) {
+//			
+//			GameOver (thisStat);
+//			yield break;
+//		}
 
 		yield return new WaitForSeconds (1.0f);
 
@@ -492,12 +570,12 @@ public class MenuState_GameState : MenuState {
 
 		StartRound ();
 
-		thisStat.ui.SetColor (Color.white);
+//		thisStat.ui.SetColor (Color.white);
 
-		m_phone.clip = m_phone.GetClip ("Phone_Lower01");
-		m_phone.Play ();
-
-		yield return new WaitForSeconds (1.0f);
+//		m_phone.clip = m_phone.GetClip ("Phone_Lower01");
+//		m_phone.Play ();
+//
+//		yield return new WaitForSeconds (1.0f);
 
 		// check if at end of timeline, four more years if so
 
@@ -506,7 +584,7 @@ public class MenuState_GameState : MenuState {
 			yield return StartCoroutine (FourMoreYears ());
 		}
 
-		m_playerInputAllowed = true;
+//		m_playerInputAllowed = true;
 
 
 
@@ -520,7 +598,7 @@ public class MenuState_GameState : MenuState {
 
 	public void TogglePhone ()
 	{
-		Debug.Log (m_phoneState);
+		
 		if (m_phoneState == PhoneState.Down) {
 
 			m_phoneState = PhoneState.Up;
@@ -602,5 +680,6 @@ public class MenuState_GameState : MenuState {
 
 	public List<Stat> stats {get{ return m_stats;}}
 	public int turnNumber {get{return m_turnNumber;}}
+	public int maxTurns {get{return m_maxTurns;}}
 	public int previousTermTurns {get{return m_previousTermTurns;}}
 }

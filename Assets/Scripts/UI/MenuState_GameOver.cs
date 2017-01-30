@@ -1,16 +1,25 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 
 public class MenuState_GameOver : MenuState {
 
+	public GameObject
+		m_timelineOBJ;
+
 	public Transform 
 		m_gameOverMenu,
 		m_gameOverScene,
-		m_statPanel;
+		m_statPanel,
+		m_timelinePanel;
 
 	public TextMeshProUGUI
-		m_gameOverText;
+		m_gameOverText,
+		m_dateText;
+
+	private List<TimelineUI> m_timelinePips = new List<TimelineUI>();
+
 
 	public override void OnActivate()
 	{
@@ -37,7 +46,6 @@ public class MenuState_GameOver : MenuState {
 
 				st.SetColor (Color.red);
 				gameOverText += s.m_winningStrings[Random.Range(0, s.m_winningStrings.Length)];
-
 			}
 		}
 
@@ -55,7 +63,7 @@ public class MenuState_GameOver : MenuState {
 
 		months = turn;
 
-		gameOverText = "\nI survived ";
+		gameOverText += "\n\nI survived ";
 
 		if (years > 0) {
 
@@ -77,6 +85,46 @@ public class MenuState_GameOver : MenuState {
 
 		m_gameOverText.text = gameOverText;
 
+		UpdateTimeLine ();
+
+	}
+
+	private void UpdateTimeLine ()
+	{
+		while (m_timelinePips.Count > 0) {
+
+			GameObject g = m_timelinePips [0].gameObject;
+			m_timelinePips.RemoveAt (0);
+			Destroy (g);
+
+		}
+
+		for (int i = 0; i < MenuState_GameState.instance.maxTurns; i++) {
+
+			GameObject uiOBJ = (GameObject) Instantiate(m_timelineOBJ, m_timelinePanel);
+			TimelineUI tUI = (TimelineUI)uiOBJ.GetComponent<TimelineUI> ();
+			m_timelinePips.Add (tUI);
+
+			if (i == MenuState_GameState.instance.turnNumber) {
+
+				tUI.SetState (TimelineUI.State.Present);
+			} else if (i < MenuState_GameState.instance.turnNumber) {
+
+				if ( i > 0 && i % 12 == 0) {
+					tUI.SetState (TimelineUI.State.Past_YearMark);
+				} else {
+					tUI.SetState (TimelineUI.State.Past);
+				}
+			} else {
+				if (i % 12 == 0) {
+					tUI.SetState (TimelineUI.State.Future_YearMark);
+				} else {
+					tUI.SetState (TimelineUI.State.Future);
+				}
+			}
+		}
+
+		m_dateText.text = MenuState_GameState.instance.GetDate (MenuState_GameState.instance.turnNumber).ToUpper();
 	}
 
 	public override void OnHold()
