@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: cd6cf1d6ea64940ca983974d32ab85e5
-timeCreated: 1485328108
+guid: a16a03ebe4c49482fb92a5ba5ac578e3
+timeCreated: 1486169535
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
@@ -9,9 +9,7 @@ ModelImporter:
     400000: //RootNode
     2300000: //RootNode
     3300000: //RootNode
-    4300000: Circle_3Seg_01
-    4300002: Cylinder.003
-    4300004: CirclePart1
+    4300000: Cylinder
   materials:
     importMaterials: 1
     materialName: 0

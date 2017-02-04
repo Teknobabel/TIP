@@ -7,6 +7,8 @@ using TMPro;
 public class GameManager : MonoBehaviour {
 	public static GameManager instance;
 
+	public bool m_skipIntro = false;
+
 	public Word[] m_verbs;
 	public Word[] m_nouns;
 
@@ -31,9 +33,6 @@ public class GameManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
-
-
-//		PushMenuState (MenuState.State.MainMenu);
 		PushMenuState (MenuState.State.GameState);
 	}
 		

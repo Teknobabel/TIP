@@ -18,7 +18,7 @@ public class KillVolume : MonoBehaviour {
 
 			d.DartMiss ();
 
-			MenuState_GameState.instance.DartMissed ();
+			MenuState_GameState.instance.DartMissed (d);
 		}
 	}
 }

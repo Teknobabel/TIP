@@ -16,7 +16,9 @@ public class Hand : MonoBehaviour {
 	m_minSpeedChangeTime = 1,
 	m_maxSpeedChangeTime = 5;
 
-	public Animation m_anim;
+	public Animation 
+	m_anim,
+	m_throwAnim;
 
 	public GameObject m_dart;
 
@@ -38,6 +40,8 @@ public class Hand : MonoBehaviour {
 
 		m_anim["Hand_Movement01"].speed = Random.Range (m_minSpeed, m_maxSpeed);
 		m_nextSpeedChange = Random.Range (m_minSpeedChangeTime, m_maxSpeedChangeTime);
+
+		m_throwAnim["Hand_Throw01"].speed = Random.Range (0.75f, 1.0f);
 
 	}
 
@@ -65,6 +69,8 @@ public class Hand : MonoBehaviour {
 		m_currentDart = (GameObject)Instantiate (m_dart, m_dartParent);
 		m_currentDart.transform.localPosition = Vector3.zero;
 
+		m_throwAnim["Hand_Throw01"].speed = Random.Range (0.75f, 1.3f);
+
 	}
 
 	public void ThrowDart ()
@@ -78,8 +84,11 @@ public class Hand : MonoBehaviour {
 			r.isKinematic = false;
 
 			r.AddForce (Vector3.right * 1000);
+
+			m_currentDart.GetComponent<Dart> ().DartThrow ();
 		}
 
+		m_throwAnim.Play ();
 
 		ChangeState (State.Waiting);
 	}

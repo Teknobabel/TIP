@@ -29,64 +29,6 @@ public class MenuState_GameState : MenuState {
 		December,
 	}
 
-//	public enum Verb
-//	{
-//		None,
-//		TargetMiss,
-//		Love,
-//		Hate,
-//		Worship,
-//		Kill,
-//		Import,
-//		Export,
-//		Destroy,
-//		Seize,
-//		Ban,
-//		Bully,
-//		Grope,
-//		Fondle,
-//		Dismiss,
-//		DeclareWarOn,
-//		SurrenderTo,
-//		SpyOn,
-//		Deport,
-//	}
-//
-//	public enum Noun
-//	{
-//		None,
-//		TargetMiss,
-//		Whites,
-//		Blacks,
-//		Jews,
-//		Mexicans,
-//		USA,
-//		Russia,
-//		China,
-//		Poor,
-//		Rich,
-//		Tacos,
-//		Burritos,
-//		Congress,
-//		TheMedia,
-//		Democracy,
-//		Abortion,
-//		Climate,
-//		Fraud,
-//		Debt,
-//		Communism,
-//		TheCyber,
-//		Law,
-//		Anarchy,
-//		Dinosaurs,
-//		Terrorists,
-//		Facts,
-//		Lies,
-//		Science,
-//		Women,
-//		Emails,
-//	}
-
 	public Transform m_gameUI;
 
 	public GameObject 
@@ -97,7 +39,9 @@ public class MenuState_GameState : MenuState {
 	public Transform
 	m_statPanel,
 	m_tweetPanel,
-	m_timelinePanel;
+	m_timelinePanel,
+	m_introPanel,
+	m_titleText;
 
 	public TextMeshProUGUI
 	m_dateText;
@@ -109,9 +53,12 @@ public class MenuState_GameState : MenuState {
 	public Stat[] m_statBank;
 
 	public Animation
-	m_phone;
+	m_phone,
+	m_intro;
 
 	public TweetUI m_tweetHeader;
+
+	public String[] m_mumbles;
 
 	private List<Stat> m_stats = new List<Stat>();
 	private List<TweetUI> m_tweets = new List<TweetUI>();
@@ -164,11 +111,21 @@ public class MenuState_GameState : MenuState {
 
 		}
 
-		UpdateTimeLine ();
+		if (!GameManager.instance.m_skipIntro) {
 
-		StartRound ();
+			StartCoroutine (Intro ());
 
-		m_playerInputAllowed = true;
+		} else {
+
+			m_introPanel.gameObject.SetActive (false);
+			m_titleText.gameObject.SetActive (true);
+
+			UpdateTimeLine ();
+
+			StartRound ();
+
+			m_playerInputAllowed = true;
+		}
 	}
 
 	public override void OnHold()
@@ -338,33 +295,50 @@ public class MenuState_GameState : MenuState {
 		m_currentVerb = null;
 	}
 
-	public void DartMissed ()
+	public void DartMissed (Dart d)
 	{
-		TargetMissed ();
-	}
+//		TargetMissed ();
 
-	private void TargetMissed ()
-	{
-		Debug.Log ("TARGET MISSED");
-		foreach (Stat thisStat in m_stats) {
+		Word w = (Word)ScriptableObject.CreateInstance ("Word");
+		w.m_wordType = d.m_dartType;
+		w.m_affinities = new Word.Affinity[1];
+		w.m_affinities [0] = new Word.Affinity ();
+		w.m_affinities [0].m_category = Word.WordCategory.General;
+		w.m_affinities [0].m_quality = Word.WordQuality.Negative;
 
-			thisStat.UpdateValue (UnityEngine.Random.Range(-20, 20));
+		if (d.m_dartType == Word.WordType.Verb) {
 
-			// check for game over state
+			w.m_responses = m_mumbles;
+			SetVerb (w);
+		} else if (d.m_dartType == Word.WordType.Noun) {
 
-			if (thisStat.currentScore == 0 || thisStat.currentScore == thisStat.maxScore) {
-				GameOver (thisStat);
-				return;
-			}
+			w.m_targetName = m_mumbles[UnityEngine.Random.Range(0, m_mumbles.Length)];
+			SetNoun (w);
 		}
-
-		Tweet t = new Tweet ();
-		t.m_body = "TWEETSTORM!!!";
-		t.m_date = GetDate (m_turnNumber);
-		m_currentTweet = t;
-
-		StartCoroutine (NextRoundTimer ());
 	}
+
+//	private void TargetMissed ()
+//	{
+//		Debug.Log ("TARGET MISSED");
+//		foreach (Stat thisStat in m_stats) {
+//
+//			thisStat.UpdateValue (UnityEngine.Random.Range(-20, 20));
+//
+//			// check for game over state
+//
+//			if (thisStat.currentScore == 0 || thisStat.currentScore == thisStat.maxScore) {
+//				GameOver (thisStat);
+//				return;
+//			}
+//		}
+//
+//		Tweet t = new Tweet ();
+//		t.m_body = "TWEETSTORM!!!";
+//		t.m_date = GetDate (m_turnNumber);
+//		m_currentTweet = t;
+//
+//		StartCoroutine (NextRoundTimer ());
+//	}
 
 	public void SetNoun (Word n)
 	{
@@ -377,7 +351,7 @@ public class MenuState_GameState : MenuState {
 			}
 		} else if (m_currentNoun != null && n != null) {
 
-			DartMissed ();
+//			DartMissed ();
 		} else {
 			m_currentNoun = n;
 		}
@@ -395,7 +369,7 @@ public class MenuState_GameState : MenuState {
 			} 
 		} else if (m_currentVerb != null && v != null) {
 
-			DartMissed ();
+//			DartMissed ();
 		} else {
 			m_currentVerb = v;
 		}
@@ -675,6 +649,26 @@ public class MenuState_GameState : MenuState {
 
 		UpdateTimeLine ();
 
+		yield return true;
+	}
+
+	public IEnumerator Intro ()
+	{
+		m_introPanel.gameObject.SetActive (true);
+
+		UpdateTimeLine ();
+
+		StartRound ();
+
+		m_intro.Play ();
+
+		yield return new WaitForSeconds (6.0f);
+
+		m_introPanel.gameObject.SetActive (false);
+		m_titleText.gameObject.SetActive (true);
+
+		m_playerInputAllowed = true;
+		
 		yield return true;
 	}
 
