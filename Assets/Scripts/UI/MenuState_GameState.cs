@@ -235,6 +235,7 @@ public class MenuState_GameState : MenuState {
 		}
 
 		m_dartboards [0].SetNoun (selectedNoun);
+		m_dartboards [0].currentState = Dartboard.State.Active;
 
 		List<Word> v = new List<Word> ();
 		List<Word> selectedVerb = new List<Word> ();
@@ -256,6 +257,7 @@ public class MenuState_GameState : MenuState {
 		}
 
 		m_dartboards [1].SetVerb (selectedVerb);
+		m_dartboards [1].currentState = Dartboard.State.Active;
 
 		foreach (Hand h in m_hands) {
 
@@ -377,6 +379,10 @@ public class MenuState_GameState : MenuState {
 
 	private void SetPhrase (Word n, Word v)
 	{
+		foreach (Dartboard d in m_dartboards)
+		{
+			d.currentState = Dartboard.State.Hit;
+		}
 
 		Tweet t = new Tweet ();
 		t.m_body = v.m_responses[UnityEngine.Random.Range(0, v.m_responses.Length)] + " " + n.m_targetName.ToUpper ();

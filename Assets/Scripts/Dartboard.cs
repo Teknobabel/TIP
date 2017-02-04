@@ -5,6 +5,14 @@ using System.Collections.Generic;
 
 public class Dartboard : MonoBehaviour {
 
+	public enum State
+	{
+		None,
+		Active,
+		Hit,
+		Missed,
+	}
+
 	public float m_rotateSpeed = 50;
 
 	public Target[] m_targets;
@@ -14,6 +22,8 @@ public class Dartboard : MonoBehaviour {
 	public Animation m_targetFlipAnimation;
 
 	public TextMesh m_resultText;
+
+	private State m_state = State.Active;
 
 	// Use this for initialization
 	void Start () {
@@ -52,6 +62,10 @@ public class Dartboard : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		m_rotationParent.Rotate (Vector3.up * Time.deltaTime * m_rotateSpeed);
+		if (m_state == State.Active) {
+			m_rotationParent.Rotate (Vector3.up * Time.deltaTime * m_rotateSpeed);
+		}
 	}
+
+	public State currentState {get{ return m_state;}set{m_state = value;}}
 }

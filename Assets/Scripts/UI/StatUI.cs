@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using TMPro;
 
 public class StatUI : MonoBehaviour {
 
@@ -10,6 +11,8 @@ public class StatUI : MonoBehaviour {
 	m_icon,
 	m_progressBar,
 	m_progressBar_BG;
+
+	public TextMeshProUGUI m_statname;
 
 	public Stat m_stat;
 
@@ -34,5 +37,15 @@ public class StatUI : MonoBehaviour {
 
 		Color c = m_progressBar_BG.color;
 		m_progressBar_BG.color = new Color (newColor.r, newColor.g, newColor.b, c.a);
+	}
+
+	public void MouseEnter ()
+	{
+		m_statname.gameObject.SetActive (true);
+	}
+
+	public void MouseExit ()
+	{
+		m_statname.gameObject.SetActive (false);
 	}
 }

@@ -42,4 +42,9 @@ public class MenuState_Pause : MenuState {
 
 		Application.Quit ();
 	}
+
+	public void DonateButtonPressed () {
+
+		Application.OpenURL ("https://action.aclu.org/secure/donate-to-aclu");
+	}
 }

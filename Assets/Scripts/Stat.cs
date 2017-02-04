@@ -22,6 +22,7 @@ public class Stat : ScriptableObject  {
 		m_ui = s;
 		m_currentScore = m_maxScore / 2;
 		s.m_stat = this;
+		s.m_statname.text = m_name.ToUpper();
 		m_ui.UpdateStatValue (m_currentScore);
 //		Debug.Log (m_icon);
 		s.m_icon.texture = m_icon;
