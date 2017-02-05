@@ -36,7 +36,7 @@ public class MenuState_GameOver : MenuState {
 			m_stats.Add (st);
 			st.m_stat = s;
 			st.m_icon.texture = s.m_icon;
-			st.UpdateStatValue (s.currentScore);
+			st.UpdateStatValue (s.currentScore, false);
 
 			if (s.currentScore == 0) {
 

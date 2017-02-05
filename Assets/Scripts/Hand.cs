@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using DG.Tweening;
 
 public class Hand : MonoBehaviour {
 
@@ -113,7 +114,11 @@ public class Hand : MonoBehaviour {
 
 				m_timer = 0.0f;
 				m_nextSpeedChange = Random.Range (m_minSpeedChangeTime, m_maxSpeedChangeTime);
-				m_anim ["Hand_Movement01"].speed = Random.Range (m_minSpeed, m_maxSpeed);
+//				m_anim ["Hand_Movement01"].speed = Random.Range (m_minSpeed, m_maxSpeed);
+				float newSpeed = Random.Range (m_minSpeed, m_maxSpeed);
+
+				DOTween.To (() => m_anim ["Hand_Movement01"].speed, x => m_anim ["Hand_Movement01"].speed = x, newSpeed, 0.5f);
+
 			}
 		}
 

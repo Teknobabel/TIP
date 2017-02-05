@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using TMPro;
+using DG.Tweening;
 
 public class GameManager : MonoBehaviour {
 	public static GameManager instance;
@@ -32,6 +33,8 @@ public class GameManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+
+		DOTween.Init ();
 
 		PushMenuState (MenuState.State.GameState);
 	}

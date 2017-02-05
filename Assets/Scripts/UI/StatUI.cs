@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 using TMPro;
+using DG.Tweening;
 
 public class StatUI : MonoBehaviour {
 
@@ -16,7 +17,7 @@ public class StatUI : MonoBehaviour {
 
 	public Stat m_stat;
 
-	public void UpdateStatValue (int newValue)
+	public void UpdateStatValue (int newValue, bool doAnimate)
 	{
 		Rect r = m_progressBar_Fill.rect;
 		r.height = newValue;
@@ -26,7 +27,13 @@ public class StatUI : MonoBehaviour {
 		float newHeight = maxHeight * modifier;
 //		Debug.Log (m_stat.m_currentScore + " / " + m_stat.m_maxScore);
 //		Debug.Log (maxHeight + " * " + modifier + " = " + newHeight);
-		m_progressBar_Fill.sizeDelta = new Vector2 (m_progressBar_Fill.sizeDelta.x, newHeight);
+
+
+		if (doAnimate) {
+			DOTween.To (() => m_progressBar_Fill.sizeDelta, x => m_progressBar_Fill.sizeDelta = x, new Vector2 (m_progressBar_Fill.sizeDelta.x, newHeight), 1);
+		} else {
+			m_progressBar_Fill.sizeDelta = new Vector2 (m_progressBar_Fill.sizeDelta.x, newHeight);
+		}
 
 	}
 

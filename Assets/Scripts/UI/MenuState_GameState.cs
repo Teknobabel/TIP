@@ -151,6 +151,9 @@ public class MenuState_GameState : MenuState {
 		if (Input.GetKeyDown (KeyCode.Escape)) {
 
 			GameManager.instance.PushMenuState (State.Pause);
+
+		} else if (Input.GetMouseButtonDown (0) && (Input.mousePosition.y < 50 || m_phoneState == PhoneState.Up)) {
+			Debug.Log (Input.mousePosition.y);
 		}
 		else if (Input.anyKeyDown) {
 
@@ -614,12 +617,20 @@ public class MenuState_GameState : MenuState {
 			m_phone.clip = m_phone.GetClip ("Phone_Raise01");
 			m_phone.Play ();
 
+//			m_phone ["Phone_Raise01"].speed *= 10;
+
+//			Time.timeScale = 0.1f;
+
 		} else if (m_phoneState == PhoneState.Up) {
 
 			m_phoneState = PhoneState.Down;
 			m_playerInputAllowed = true;
 			m_phone.clip = m_phone.GetClip ("Phone_Lower01");
 			m_phone.Play ();
+
+//			m_phone ["Phone_Raise01"].speed *= 0.1f;
+
+//			Time.timeScale = 1.0f;
 
 			if (m_waitingForNextTurn) {
 

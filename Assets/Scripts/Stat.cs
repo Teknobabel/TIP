@@ -19,12 +19,11 @@ public class Stat : ScriptableObject  {
 
 	public void Initialize (StatUI s)
 	{
+		Debug.Log (m_currentScore);
 		m_ui = s;
-		m_currentScore = m_maxScore / 2;
 		s.m_stat = this;
 		s.m_statname.text = m_name.ToUpper();
-		m_ui.UpdateStatValue (m_currentScore);
-//		Debug.Log (m_icon);
+		UpdateValue (m_maxScore / 2);
 		s.m_icon.texture = m_icon;
 
 	}
@@ -32,13 +31,13 @@ public class Stat : ScriptableObject  {
 	public void UpdateValue (int amt)
 	{
 		m_currentScore = Mathf.Clamp (m_currentScore + amt, 0, m_maxScore);
-		m_ui.UpdateStatValue (m_currentScore);
+		m_ui.UpdateStatValue (m_currentScore, true);
 	}
 
 	public void SetValue (int newValue)
 	{
 		m_currentScore = Mathf.Clamp (newValue, 0, m_maxScore);
-		m_ui.UpdateStatValue (m_currentScore);
+		m_ui.UpdateStatValue (m_currentScore, false);
 	}
 
 	public int maxScore {get{return m_maxScore;}}
