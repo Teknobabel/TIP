@@ -19,7 +19,7 @@ public class MenuState_GameOver : MenuState {
 		m_dateText;
 
 	private List<TimelineUI> m_timelinePips = new List<TimelineUI>();
-
+	private List<StatUI> m_stats = new List<StatUI>();
 
 	public override void OnActivate()
 	{
@@ -33,6 +33,7 @@ public class MenuState_GameOver : MenuState {
 			Stat s = MenuState_GameState.instance.stats [i];
 			GameObject uiOBJ = (GameObject) Instantiate(MenuState_GameState.instance.m_statOBJ, m_statPanel);
 			StatUI st = (StatUI)uiOBJ.GetComponent<StatUI> ();
+			m_stats.Add (st);
 			st.m_stat = s;
 			st.m_icon.texture = s.m_icon;
 			st.UpdateStatValue (s.currentScore);
@@ -139,6 +140,22 @@ public class MenuState_GameOver : MenuState {
 
 	public override void OnDeactivate()
 	{
+		while (m_timelinePips.Count > 0) {
+
+			GameObject g = m_timelinePips [0].gameObject;
+			m_timelinePips.RemoveAt (0);
+			Destroy (g);
+
+		}
+
+		while (m_stats.Count > 0) {
+
+			GameObject g = m_stats [0].gameObject;
+			m_stats.RemoveAt (0);
+			Destroy (g);
+
+		}
+
 		m_gameOverMenu.gameObject.SetActive (false);
 		m_gameOverScene.gameObject.SetActive (false);
 	}

@@ -69,7 +69,9 @@ public class MenuState_GameState : MenuState {
 	private Word m_currentNoun = null;
 	private Word m_currentVerb = null;
 
-	private bool m_playerInputAllowed = false;
+	private bool 
+	m_playerInputAllowed = false,
+	m_waitingForNextTurn = false;
 
 	private PhoneState m_phoneState = PhoneState.Down;
 
@@ -145,13 +147,14 @@ public class MenuState_GameState : MenuState {
 
 	public override void OnUpdate()
 	{
-		if (Input.GetKeyUp (KeyCode.Escape)) {
+//		Debug.Log (m_playerInputAllowed);
+		if (Input.GetKeyDown (KeyCode.Escape)) {
 
 			GameManager.instance.PushMenuState (State.Pause);
 		}
 		else if (Input.anyKeyDown) {
 
-			if (m_phoneState == PhoneState.Up) {
+			if (m_phoneState == PhoneState.Up && m_playerInputAllowed) {
 
 				TogglePhone ();
 
@@ -161,10 +164,16 @@ public class MenuState_GameState : MenuState {
 
 					h.ThrowDart ();
 
-//				foreach (Dartboard d in m_dartboards) {
-//
-//					d.ToggleTargetFlip ();
-//				}
+				}
+
+				foreach (Dartboard d in m_dartboards) {
+
+					float flipChance = 0.1f;
+
+					if (!d.flipped && MenuState_GameState.instance.turnNumber > 5 && UnityEngine.Random.Range (0.0f, 1.0f) <= flipChance) {
+
+						d.ToggleTargetFlip ();
+					}
 				}
 
 				m_playerInputAllowed = false;
@@ -227,7 +236,7 @@ public class MenuState_GameState : MenuState {
 //			}
 		}
 
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 4; i++) {
 
 			int rand = UnityEngine.Random.Range (0, n.Count);
 			selectedNoun.Add (n [rand]);
@@ -235,7 +244,6 @@ public class MenuState_GameState : MenuState {
 		}
 
 		m_dartboards [0].SetNoun (selectedNoun);
-		m_dartboards [0].currentState = Dartboard.State.Active;
 
 		List<Word> v = new List<Word> ();
 		List<Word> selectedVerb = new List<Word> ();
@@ -249,7 +257,7 @@ public class MenuState_GameState : MenuState {
 //			}
 		}
 
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 4; i++) {
 
 			int rand = UnityEngine.Random.Range (0, v.Count);
 			selectedVerb.Add (v [rand]);
@@ -257,7 +265,26 @@ public class MenuState_GameState : MenuState {
 		}
 
 		m_dartboards [1].SetVerb (selectedVerb);
-		m_dartboards [1].currentState = Dartboard.State.Active;
+
+		foreach (Dartboard d in m_dartboards) {
+
+			if (d.flipped) {
+				
+				d.ToggleTargetFlip ();
+
+			} else {
+				
+				float flipChance = 0.1f;
+
+				if (!d.flipped && MenuState_GameState.instance.turnNumber > 5 && UnityEngine.Random.Range (0.0f, 1.0f) <= flipChance) {
+
+					d.ToggleTargetFlip ();
+				}
+				
+			}
+
+			d.currentState = Dartboard.State.Active;
+		}
 
 		foreach (Hand h in m_hands) {
 
@@ -544,11 +571,11 @@ public class MenuState_GameState : MenuState {
 //			yield break;
 //		}
 
-		yield return new WaitForSeconds (1.0f);
+//		yield return new WaitForSeconds (1.0f);
 
-		EndRound ();
-
-		StartRound ();
+//		EndRound ();
+//
+//		StartRound ();
 
 //		thisStat.ui.SetColor (Color.white);
 
@@ -564,8 +591,8 @@ public class MenuState_GameState : MenuState {
 			yield return StartCoroutine (FourMoreYears ());
 		}
 
-//		m_playerInputAllowed = true;
-
+		m_playerInputAllowed = true;
+		m_waitingForNextTurn = true;
 
 
 		yield return true;
@@ -594,12 +621,20 @@ public class MenuState_GameState : MenuState {
 			m_phone.clip = m_phone.GetClip ("Phone_Lower01");
 			m_phone.Play ();
 
+			if (m_waitingForNextTurn) {
+
+				m_waitingForNextTurn = false;
+				EndRound ();
+
+				StartRound ();
+			}
+
 		}
 	}
 
 	public void RestartGame ()
 	{
-		m_turnNumber = 0;
+		m_turnNumber = -1;
 
 		foreach (Stat s in m_stats) {
 
@@ -611,7 +646,24 @@ public class MenuState_GameState : MenuState {
 			TogglePhone ();
 		}
 
-		UpdateTimeLine ();
+		// empty list of tweets and tweets on phone
+
+		m_tweetList.Clear ();
+
+		while (m_tweets.Count > 0) {
+
+			TweetUI t = m_tweets[0];
+			m_tweets.RemoveAt (0);
+			Destroy (t.gameObject);
+		}
+
+		// renable empty feed state
+
+		m_tweetHeader.m_text.gameObject.SetActive (true);
+
+		EndRound ();
+
+		StartRound ();
 	}
 
 	public IEnumerator FourMoreYears ()
@@ -682,4 +734,5 @@ public class MenuState_GameState : MenuState {
 	public int turnNumber {get{return m_turnNumber;}}
 	public int maxTurns {get{return m_maxTurns;}}
 	public int previousTermTurns {get{return m_previousTermTurns;}}
+	public bool playerInputAllowed {get{return m_playerInputAllowed;} set{ m_playerInputAllowed = value; }}
 }

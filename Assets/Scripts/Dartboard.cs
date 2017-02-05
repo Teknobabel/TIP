@@ -25,6 +25,8 @@ public class Dartboard : MonoBehaviour {
 
 	private State m_state = State.Active;
 
+	private bool m_flipped = false;
+
 	// Use this for initialization
 	void Start () {
 	
@@ -54,8 +56,16 @@ public class Dartboard : MonoBehaviour {
 
 	public void ToggleTargetFlip ()
 	{
-		if (m_targetFlipAnimation != null) {
-			m_targetFlipAnimation.Play ();
+		Debug.Log ("toggleflip");
+		if (!m_flipped && m_targetFlipAnimation != null) {
+
+			m_flipped = true;
+			m_targetFlipAnimation.Play ("Target_Flip01");
+
+		} else if (m_flipped && m_targetFlipAnimation != null) {
+
+			m_targetFlipAnimation.Play ("Target_Flip02");
+			m_flipped = false;
 		}
 	}
 	
@@ -68,4 +78,5 @@ public class Dartboard : MonoBehaviour {
 	}
 
 	public State currentState {get{ return m_state;}set{m_state = value;}}
+	public bool flipped {get{ return m_flipped;}}
 }
