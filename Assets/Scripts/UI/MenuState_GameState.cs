@@ -173,7 +173,7 @@ public class MenuState_GameState : MenuState {
 
 					float flipChance = 0.1f;
 
-					if (!d.flipped && MenuState_GameState.instance.turnNumber > 5 && UnityEngine.Random.Range (0.0f, 1.0f) <= flipChance) {
+					if (!d.flipped && MenuState_GameState.instance.turnNumber > 3 && UnityEngine.Random.Range (0.0f, 1.0f) <= flipChance) {
 
 						d.ToggleTargetFlip ();
 					}
@@ -277,9 +277,9 @@ public class MenuState_GameState : MenuState {
 
 			} else {
 				
-				float flipChance = 0.1f;
+				float flipChance = 0.2f;
 
-				if (!d.flipped && MenuState_GameState.instance.turnNumber > 5 && UnityEngine.Random.Range (0.0f, 1.0f) <= flipChance) {
+				if (!d.flipped && MenuState_GameState.instance.turnNumber > 3 && UnityEngine.Random.Range (0.0f, 1.0f) <= flipChance) {
 
 					d.ToggleTargetFlip ();
 				}
@@ -430,7 +430,7 @@ public class MenuState_GameState : MenuState {
 
 		while (turn > 11) {
 
-			turn -= 11;
+			turn -= 12;
 			year++;
 		}
 
@@ -481,6 +481,7 @@ public class MenuState_GameState : MenuState {
 		m_currentTweet = null;
 
 		int incAmount = 20;
+//		int incAmount = 1;
 		int amt = 0;
 
 		foreach (Word.Affinity af in m_currentNoun.m_affinities) {

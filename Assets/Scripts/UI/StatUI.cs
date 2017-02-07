@@ -11,7 +11,8 @@ public class StatUI : MonoBehaviour {
 	public RawImage 
 	m_icon,
 	m_progressBar,
-	m_progressBar_BG;
+	m_progressBar_BG,
+	m_iconBorder;
 
 	public TextMeshProUGUI m_statname;
 
@@ -41,6 +42,7 @@ public class StatUI : MonoBehaviour {
 	{
 		m_icon.color = newColor;
 		m_progressBar.color = newColor;
+		m_iconBorder.color = newColor;
 
 		Color c = m_progressBar_BG.color;
 		m_progressBar_BG.color = new Color (newColor.r, newColor.g, newColor.b, c.a);
