@@ -56,7 +56,10 @@ public class Dartboard : MonoBehaviour {
 
 	public void ToggleTargetFlip ()
 	{
-		Debug.Log ("toggleflip");
+//		Debug.Log ("toggleflip");
+
+		AudioManager.instance.PlaySound (AudioManager.SoundType.Target_Flip);
+
 		if (!m_flipped && m_targetFlipAnimation != null) {
 
 			m_flipped = true;

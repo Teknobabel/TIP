@@ -169,6 +169,8 @@ public class MenuState_GameState : MenuState {
 
 				}
 
+				AudioManager.instance.PlaySound (AudioManager.SoundType.Dart_Flight);
+
 				foreach (Dartboard d in m_dartboards) {
 
 					float flipChance = 0.1f;
@@ -461,6 +463,8 @@ public class MenuState_GameState : MenuState {
 		m_phone.clip = m_phone.GetClip ("Phone_Raise01");
 		m_phone.Play ();
 
+		AudioManager.instance.PlaySound (AudioManager.SoundType.Phone_Raise);
+
 		yield return new WaitForSeconds (1.0f);
 
 		m_currentTweet.m_id = GameManager.instance.newID;
@@ -473,6 +477,8 @@ public class MenuState_GameState : MenuState {
 
 		newTweetOBJ.transform.SetAsFirstSibling ();
 
+		AudioManager.instance.PlaySound (AudioManager.SoundType.Tweet_Sent);
+
 		TweetUI t = newTweetOBJ.GetComponent<TweetUI> ();
 		t.Tweet (m_currentTweet);
 		m_tweets.Add (t);
@@ -480,11 +486,20 @@ public class MenuState_GameState : MenuState {
 		m_tweetList.Add (m_currentTweet.m_id, m_currentTweet);
 		m_currentTweet = null;
 
-		int incAmount = 20;
+		int incAmount = 15;
 //		int incAmount = 1;
 		int amt = 0;
 
-		foreach (Word.Affinity af in m_currentNoun.m_affinities) {
+		for (int i=0; i < m_currentNoun.m_affinities.Length; i++){
+
+			Word.Affinity af = m_currentNoun.m_affinities [i];
+
+//			float modifier = 1.0f;
+
+//			if (i < 0) {
+//
+//				modifier = 0.5f;
+//			}
 
 			Word.Affinity vAf = m_currentVerb.m_affinities [0];
 
@@ -520,6 +535,45 @@ public class MenuState_GameState : MenuState {
 					if (thisStat.m_category == af.m_category) {
 						
 						thisStat.UpdateValue (amt);
+
+						switch (thisStat.m_category) {
+
+						case Word.WordCategory.Captialism:
+
+							if (amt > 0) {
+								AudioManager.instance.PlaySound (AudioManager.SoundType.Capitalism_Increase);
+							} else {
+								AudioManager.instance.PlaySound (AudioManager.SoundType.Capitalism_Decrease);
+							}
+							break;
+
+						case Word.WordCategory.Law:
+
+							if (amt > 0) {
+								AudioManager.instance.PlaySound (AudioManager.SoundType.Law_Increase);
+							} else {
+								AudioManager.instance.PlaySound (AudioManager.SoundType.Law_Decrease);
+							}
+							break;
+
+						case Word.WordCategory.Democracy:
+							
+							if (amt > 0) {
+								AudioManager.instance.PlaySound (AudioManager.SoundType.Democracy_Increase);
+							} else {
+								AudioManager.instance.PlaySound (AudioManager.SoundType.Democracy_Decrease);
+							}
+							break;
+
+						case Word.WordCategory.Culture:
+
+							if (amt > 0) {
+								AudioManager.instance.PlaySound (AudioManager.SoundType.Culture_Increase);
+							} else {
+								AudioManager.instance.PlaySound (AudioManager.SoundType.Culture_Decrease);
+							}
+							break;
+						}
 
 						if (thisStat.currentScore == 0 || thisStat.currentScore == thisStat.maxScore) {
 							
@@ -618,6 +672,8 @@ public class MenuState_GameState : MenuState {
 			m_phone.clip = m_phone.GetClip ("Phone_Raise01");
 			m_phone.Play ();
 
+			AudioManager.instance.PlaySound (AudioManager.SoundType.Phone_Raise);
+
 //			m_phone ["Phone_Raise01"].speed *= 10;
 
 //			Time.timeScale = 0.1f;
@@ -628,6 +684,8 @@ public class MenuState_GameState : MenuState {
 			m_playerInputAllowed = true;
 			m_phone.clip = m_phone.GetClip ("Phone_Lower01");
 			m_phone.Play ();
+
+			AudioManager.instance.PlaySound (AudioManager.SoundType.Phone_Raise);
 
 //			m_phone ["Phone_Raise01"].speed *= 0.1f;
 
@@ -732,7 +790,12 @@ public class MenuState_GameState : MenuState {
 
 		m_intro.Play ();
 
-		yield return new WaitForSeconds (6.0f);
+
+		yield return new WaitForSeconds (2.5f);
+
+		AudioManager.instance.PlaySound (AudioManager.SoundType.Curtain_Raise);
+
+		yield return new WaitForSeconds (2.5f);
 
 		m_introPanel.gameObject.SetActive (false);
 		m_titleText.gameObject.SetActive (true);

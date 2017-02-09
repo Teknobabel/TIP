@@ -25,6 +25,9 @@ public class Dart : MonoBehaviour {
 	{
 		m_collider.enabled = false;
 		m_anim.Play ();
+
+		AudioManager.instance.PlaySound (AudioManager.SoundType.Dart_HitTarget);
+
 //		m_trail.gameObject.SetActive (false);
 	}
 
