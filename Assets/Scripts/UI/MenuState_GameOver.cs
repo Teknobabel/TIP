@@ -18,37 +18,40 @@ public class MenuState_GameOver : MenuState {
 		m_gameOverText,
 		m_dateText;
 
+	public Animation
+	m_outro;
+
 	private List<TimelineUI> m_timelinePips = new List<TimelineUI>();
 	private List<StatUI> m_stats = new List<StatUI>();
 
 	public override void OnActivate()
 	{
 		m_gameOverMenu.gameObject.SetActive (true);
-		m_gameOverScene.gameObject.SetActive (true);
+//		m_gameOverScene.gameObject.SetActive (true);
 
 		string gameOverText = "";
 
-		for (int i=0; i < MenuState_GameState.instance.stats.Count; i++)
-		{
-			Stat s = MenuState_GameState.instance.stats [i];
-			GameObject uiOBJ = (GameObject) Instantiate(MenuState_GameState.instance.m_statOBJ, m_statPanel);
-			StatUI st = (StatUI)uiOBJ.GetComponent<StatUI> ();
-			m_stats.Add (st);
-			st.m_stat = s;
-			st.m_icon.texture = s.m_icon;
-			st.UpdateStatValue (s.currentScore, false);
-
-			if (s.currentScore == 0) {
-
-				st.SetColor (Color.red);
-				gameOverText += s.m_losingStrings[Random.Range(0, s.m_losingStrings.Length)];
-
-			} else if (s.currentScore == s.maxScore) {
-
-				st.SetColor (Color.red);
-				gameOverText += s.m_winningStrings[Random.Range(0, s.m_winningStrings.Length)];
-			}
-		}
+//		for (int i=0; i < MenuState_GameState.instance.stats.Count; i++)
+//		{
+//			Stat s = MenuState_GameState.instance.stats [i];
+//			GameObject uiOBJ = (GameObject) Instantiate(MenuState_GameState.instance.m_statOBJ, m_statPanel);
+//			StatUI st = (StatUI)uiOBJ.GetComponent<StatUI> ();
+//			m_stats.Add (st);
+//			st.m_stat = s;
+//			st.m_icon.texture = s.m_icon;
+//			st.UpdateStatValue (s.currentScore, false);
+//
+//			if (s.currentScore == 0) {
+//
+//				st.SetColor (Color.red);
+//				gameOverText += s.m_losingStrings[Random.Range(0, s.m_losingStrings.Length)];
+//
+//			} else if (s.currentScore == s.maxScore) {
+//
+//				st.SetColor (Color.red);
+//				gameOverText += s.m_winningStrings[Random.Range(0, s.m_winningStrings.Length)];
+//			}
+//		}
 
 
 		int years = 0;
@@ -86,7 +89,11 @@ public class MenuState_GameOver : MenuState {
 
 		m_gameOverText.text = gameOverText;
 
-		UpdateTimeLine ();
+//		UpdateTimeLine ();
+
+		m_outro.gameObject.SetActive (true);
+		m_outro.Play ();
+
 
 	}
 

@@ -54,11 +54,19 @@ public class MenuState_GameState : MenuState {
 
 	public Animation
 	m_phone,
-	m_intro;
+	m_intro,
+	m_outro;
 
 	public TweetUI m_tweetHeader;
 
-	public String[] m_mumbles;
+//	public String[] m_mumbles;
+
+//	public Response[] m_responseBank;
+
+//	public String[] m_positiveInterjections;
+//	public String[] m_negativeInterjections;
+
+	public String[] m_interjections;
 
 	private List<Stat> m_stats = new List<Stat>();
 	private List<TweetUI> m_tweets = new List<TweetUI>();
@@ -331,7 +339,6 @@ public class MenuState_GameState : MenuState {
 
 	public void DartMissed (Dart d)
 	{
-//		TargetMissed ();
 
 		Word w = (Word)ScriptableObject.CreateInstance ("Word");
 		w.m_wordType = d.m_dartType;
@@ -342,37 +349,26 @@ public class MenuState_GameState : MenuState {
 
 		if (d.m_dartType == Word.WordType.Verb) {
 
-			w.m_responses = m_mumbles;
+			w.m_responseBank = new Response[1];
+
+			Response r = new Response();
+			r.m_fragments = new Response.ResponseFragment[2];
+			r.m_fragments [0] = new Response.ResponseFragment ();
+			r.m_fragments [0].m_type = Response.FragmentType.String;
+			r.m_fragments [0].m_string = m_interjections[UnityEngine.Random.Range(0, m_interjections.Length)] + " ";
+
+			r.m_fragments [1] = new Response.ResponseFragment ();
+			r.m_fragments [1].m_type = Response.FragmentType.Noun_Capitolized;
+
+			w.m_responseBank [0] = r;
+
 			SetVerb (w);
 		} else if (d.m_dartType == Word.WordType.Noun) {
 
-			w.m_targetName = m_mumbles[UnityEngine.Random.Range(0, m_mumbles.Length)];
+			w.m_targetName = m_interjections[UnityEngine.Random.Range(0, m_interjections.Length)];
 			SetNoun (w);
 		}
 	}
-
-//	private void TargetMissed ()
-//	{
-//		Debug.Log ("TARGET MISSED");
-//		foreach (Stat thisStat in m_stats) {
-//
-//			thisStat.UpdateValue (UnityEngine.Random.Range(-20, 20));
-//
-//			// check for game over state
-//
-//			if (thisStat.currentScore == 0 || thisStat.currentScore == thisStat.maxScore) {
-//				GameOver (thisStat);
-//				return;
-//			}
-//		}
-//
-//		Tweet t = new Tweet ();
-//		t.m_body = "TWEETSTORM!!!";
-//		t.m_date = GetDate (m_turnNumber);
-//		m_currentTweet = t;
-//
-//		StartCoroutine (NextRoundTimer ());
-//	}
 
 	public void SetNoun (Word n)
 	{
@@ -415,9 +411,123 @@ public class MenuState_GameState : MenuState {
 		{
 			d.currentState = Dartboard.State.Hit;
 		}
+			
+
+		// get random response
+
+		Response r = v.m_responseBank[UnityEngine.Random.Range(0, v.m_responseBank.Length)];
+		String s = "";
+
+		// populate response fragments
+
+		foreach (Response.ResponseFragment rf in r.m_fragments) {
+
+			switch (rf.m_type) {
+
+			case Response.FragmentType.String:
+
+				s += rf.m_string;
+				break;
+			case Response.FragmentType.Noun:
+				if (UnityEngine.Random.Range (0.0f, 1.0f) <= 0.4f) {
+					s += "<color=#060A67FF>" + n.m_targetName.ToUpper () + "</color>";
+				} else {
+
+					if (n.m_proper)
+					{
+						s += "<color=#060A67FF>" + n.m_targetName + "</color>";
+					} else {
+						s += "<color=#060A67FF>" + n.m_targetName.ToLower () + "</color>";
+					}
+				}
+				break;
+			case Response.FragmentType.Noun_Capitolized:
+				if (UnityEngine.Random.Range (0.0f, 1.0f) <= 0.4f) {
+					s += "<color=#060A67FF>" + n.m_targetName.ToUpper () + "</color>";
+				} else {
+					
+					string st = n.m_targetName;
+					st = char.ToUpper(st[0]) + st.Substring(1);
+					s += "<color=#060A67FF>" + st + "</color>";
+				}
+				break;
+			case Response.FragmentType.Verb_Capitolized:
+				if (UnityEngine.Random.Range (0.0f, 1.0f) <= 0.4f) {
+					s += "<color=#3A0D0DFF>" + rf.m_string.ToUpper () + "</color>";
+				} else {
+
+					string st = rf.m_string;
+					st = char.ToUpper(st[0]) + st.Substring(1);
+					s += "<color=#3A0D0DFF>" + st + "</color>";
+
+				}
+				break;
+			case Response.FragmentType.Verb:
+				if (UnityEngine.Random.Range (0.0f, 1.0f) <= 0.4f) {
+					s += "<color=#3A0D0DFF>" + rf.m_string.ToUpper () + "</color>";
+				} else {
+					s += "<color=#3A0D0DFF>" + rf.m_string.ToLower () + "</color>";
+				}
+				break;
+			case Response.FragmentType.Question:
+				
+				if (UnityEngine.Random.Range (0.0f, 1.0f) <= 0.1f) {
+					s += "?!";
+				} else if (UnityEngine.Random.Range (0.0f, 1.0f) <= 0.3f) {
+
+					s += "??";
+
+				} else if (UnityEngine.Random.Range (0.0f, 1.0f) <= 0.5f) {
+
+					s += "???";
+
+				} else {
+
+					s += "?";
+				}
+				break;
+			case Response.FragmentType.Statement:
+
+				if (UnityEngine.Random.Range (0.0f, 1.0f) <= 0.2f) {
+					s += ".";
+				} else if (UnityEngine.Random.Range (0.0f, 1.0f) <= 0.4f) {
+
+					s += "!!";
+
+				} else if (UnityEngine.Random.Range (0.0f, 1.0f) <= 0.6f) {
+
+				s += "!!";
+
+				} else {
+					
+					s += "!";
+				}
+				break;
+			}
+		}
+
+		// chance for interjection
+
+		if (UnityEngine.Random.Range (0.0f, 1.0f) <= 0.3f) {
+
+			string interjection = " " + m_interjections[UnityEngine.Random.Range(0, m_interjections.Length)];
+
+			if (UnityEngine.Random.Range (0.0f, 1.0f) <= 0.3f) {
+				interjection = interjection.ToUpper ();
+			}
+
+			s += interjection;
+		}
+
+		// chance for all caps
+
+		if (UnityEngine.Random.Range (0.0f, 1.0f) <= 0.2f) {
+			s = s.ToUpper ();
+		}
+
 
 		Tweet t = new Tweet ();
-		t.m_body = v.m_responses[UnityEngine.Random.Range(0, v.m_responses.Length)] + " " + n.m_targetName.ToUpper ();
+		t.m_body = s;
 		t.m_date = GetDate (m_turnNumber);
 		m_currentTweet = t;
 
@@ -486,8 +596,8 @@ public class MenuState_GameState : MenuState {
 		m_tweetList.Add (m_currentTweet.m_id, m_currentTweet);
 		m_currentTweet = null;
 
-		int incAmount = 15;
-//		int incAmount = 1;
+//		int incAmount = 15;
+		int incAmount = 1;
 		int amt = 0;
 
 		for (int i=0; i < m_currentNoun.m_affinities.Length; i++){
@@ -658,7 +768,11 @@ public class MenuState_GameState : MenuState {
 
 	private void GameOver (Stat s)
 	{
-		GameManager.instance.PushMenuState (State.GameOver);
+		m_playerInputAllowed = false;
+
+		m_outro.gameObject.SetActive (true);
+		m_outro.Play ();
+//		GameManager.instance.PushMenuState (State.GameOver);
 	}
 
 	public void TogglePhone ()

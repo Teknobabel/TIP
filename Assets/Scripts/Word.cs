@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+
 [CreateAssetMenu()]
 public class Word : ScriptableObject {
 
@@ -27,6 +28,8 @@ public class Word : ScriptableObject {
 		Negative,
 	}
 
+
+
 	[System.Serializable]
 	public class Affinity
 	{
@@ -36,6 +39,8 @@ public class Word : ScriptableObject {
 
 	public string m_targetName;
 	public WordType m_wordType;
-	public string[] m_responses;
+//	public string[] m_responses;
+	public Response[] m_responseBank;
 	public Affinity[] m_affinities;
+	public bool m_proper = false;
 }
