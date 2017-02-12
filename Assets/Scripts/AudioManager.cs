@@ -22,6 +22,8 @@ public class AudioManager : MonoBehaviour {
 		Culture_Increase,
 		Culture_Decrease,
 		Curtain_Raise,
+		GameOver_Sting,
+		Button_Click,
 	}
 
 	public AudioSource m_sfxSource;
@@ -41,9 +43,12 @@ public class AudioManager : MonoBehaviour {
 	public AudioClip m_lawDecrease;
 	public AudioClip m_cultureDecrease;
 	public AudioClip m_curtainRaise;
+	public AudioClip m_gameOverSting;
+	public AudioClip m_gameOverMusic;
+	public AudioClip m_buttonClick;
 
 	private float m_sfxVolume = 1.0f;
-	private float m_musicVolue = 1.0f;
+	private float m_musicVolume = 1.0f;
 
 	void Awake ()
 	{
@@ -104,47 +109,68 @@ public class AudioManager : MonoBehaviour {
 		case SoundType.Democracy_Decrease:
 
 			a = m_democracyDecrease;
+			volume = m_sfxVolume * 0.5f;
 
 			break;
 		case SoundType.Democracy_Increase:
 
 			a = m_democracy;
+			volume = m_sfxVolume * 0.5f;
 
 			break;
 		case SoundType.Capitalism_Decrease:
 
 			a = m_capitalismDecrease;
+			volume = m_sfxVolume * 0.5f;
 
 			break;
 		case SoundType.Capitalism_Increase:
 
 			a = m_capitalism;
+			volume = m_sfxVolume * 0.5f;
 
 			break;
 		case SoundType.Law_Decrease:
 
 			a = m_lawDecrease;
+			volume = m_sfxVolume * 0.5f;
 
 			break;
 		case SoundType.Law_Increase:
 
 			a = m_law;
+			volume = m_sfxVolume * 0.5f;
 
 			break;
 		case SoundType.Culture_Decrease:
 
 			a = m_cultureDecrease;
+			volume = m_sfxVolume * 0.5f;
 
 			break;
 		case SoundType.Culture_Increase:
 
 			a = m_culture;
+			volume = m_sfxVolume * 0.5f;
+
+			break;
+		case SoundType.Button_Click:
+
+			a = m_buttonClick;
+			volume = m_sfxVolume * 0.5f;
 
 			break;
 		case SoundType.Curtain_Raise:
 
 			a = m_curtainRaise;
 			volume = m_sfxVolume * 0.1f;
+
+			break;
+		case SoundType.GameOver_Sting:
+
+			a = m_gameOverSting;
+			m_musicSource.Stop ();
+			m_sfxSource.PlayOneShot (m_gameOverMusic, m_musicVolume);
 
 			break;
 		}

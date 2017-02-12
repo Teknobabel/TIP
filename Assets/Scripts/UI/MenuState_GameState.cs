@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using System;
+using UnityEngine.Analytics;
 
 public class MenuState_GameState : MenuState {
 	public static MenuState_GameState instance;
@@ -44,7 +45,8 @@ public class MenuState_GameState : MenuState {
 	m_titleText;
 
 	public TextMeshProUGUI
-	m_dateText;
+	m_dateText,
+	m_gameOverResults;
 
 	public Dartboard[] m_dartboards;
 
@@ -89,6 +91,11 @@ public class MenuState_GameState : MenuState {
 	m_previousTermTurns = 0;
 
 	private Tweet m_currentTweet = null;
+
+	private string CONSUMER_KEY = "8FCY5K98HZ4vbC4EWUkrHI0fu";
+	private string CONSUMER_SECRET = "SOiF0UCjj5Y1FH5MhdfeEYcNdyPTJUTybUjm1dNPgng6Iv3X6w";
+	Twitter.RequestTokenResponse m_RequestTokenResponse;
+	Twitter.AccessTokenResponse m_AccessTokenResponse;
 
 	void Awake ()
 	{
@@ -161,7 +168,7 @@ public class MenuState_GameState : MenuState {
 			GameManager.instance.PushMenuState (State.Pause);
 
 		} else if (Input.GetMouseButtonDown (0) && (Input.mousePosition.y < 50 || m_phoneState == PhoneState.Up)) {
-			Debug.Log (Input.mousePosition.y);
+//			Debug.Log (Input.mousePosition.y);
 		}
 		else if (Input.anyKeyDown) {
 
@@ -640,6 +647,8 @@ public class MenuState_GameState : MenuState {
 
 			if (amt != 0) {
 
+				yield return new WaitForSeconds (1.0f);
+
 				foreach (Stat thisStat in m_stats) {
 
 					if (thisStat.m_category == af.m_category) {
@@ -709,48 +718,12 @@ public class MenuState_GameState : MenuState {
 			}
 		}
 
-//		int randStat = UnityEngine.Random.Range (0, m_stats.Count);
-//		Stat thisStat = m_stats [randStat];
-//
-//		int amtChange = UnityEngine.Random.Range (-20, 20);
-//		thisStat.UpdateValue (amtChange);
-//
-//		if (amtChange > 0) {
-//
-//			thisStat.ui.SetColor (Color.green);
-//
-//		} else if (amtChange < 0) {
-//			
-//			thisStat.ui.SetColor (Color.red);
-//		}
-//
 		yield return new WaitForSeconds (1.0f);
 
 		foreach (Stat thisStat in m_stats) {
 
 			thisStat.ui.SetColor (Color.white);
 		}
-//
-//		// check for game over state
-//
-//		if (thisStat.currentScore == 0 || thisStat.currentScore == thisStat.maxScore) {
-//			
-//			GameOver (thisStat);
-//			yield break;
-//		}
-
-//		yield return new WaitForSeconds (1.0f);
-
-//		EndRound ();
-//
-//		StartRound ();
-
-//		thisStat.ui.SetColor (Color.white);
-
-//		m_phone.clip = m_phone.GetClip ("Phone_Lower01");
-//		m_phone.Play ();
-//
-//		yield return new WaitForSeconds (1.0f);
 
 		// check if at end of timeline, four more years if so
 
@@ -768,11 +741,38 @@ public class MenuState_GameState : MenuState {
 
 	private void GameOver (Stat s)
 	{
+		Debug.Log ("Game Over");
+
+		Analytics.CustomEvent("gameOver", new Dictionary<string, object>
+			{
+				{ "stat", s.m_name },
+				{ "score", s.currentScore },
+				{ "turns", m_turnNumber + m_previousTermTurns },
+			});
+				
 		m_playerInputAllowed = false;
+
+		AudioManager.instance.PlaySound (AudioManager.SoundType.GameOver_Sting);
+
+		string gameOverResults = "";
+
+		if (s.currentScore == 100) {
+
+			gameOverResults = s.m_winningStrings [0];
+		} else if (s.currentScore == 0) {
+			gameOverResults = s.m_losingStrings [0];
+		}
+
+		m_gameOverResults.text = gameOverResults;
 
 		m_outro.gameObject.SetActive (true);
 		m_outro.Play ();
-//		GameManager.instance.PushMenuState (State.GameOver);
+	}
+
+	public void PhoneButtonPressed ()
+	{
+		AudioManager.instance.PlaySound (AudioManager.SoundType.Button_Click);
+		TogglePhone ();
 	}
 
 	public void TogglePhone ()
@@ -917,6 +917,124 @@ public class MenuState_GameState : MenuState {
 		m_playerInputAllowed = true;
 		
 		yield return true;
+	}
+
+	public void GameOverTweetButtonPressed ()
+	{
+		AudioManager.instance.PlaySound (AudioManager.SoundType.Button_Click);
+
+		string TWITTER_ADDRESS = "http://twitter.com/intent/tweet";
+		string TWITTER_LANGUAGE = "en";
+		string LINK = "http://";
+
+		string s = "I survived ";
+
+		int years = 0;
+		int months = 0;
+
+		int turn = MenuState_GameState.instance.turnNumber + MenuState_GameState.instance.previousTermTurns;
+
+		while (turn > 11) {
+
+			turn -= 11;
+			years++;
+		}
+
+		months = turn;
+
+		if (years > 0) {
+
+			if (years == 1) {
+				s += years.ToString () + " year ";
+			} else {
+				s += years.ToString () + " years ";
+			}
+
+			if (months > 0) {
+				s += "and ";
+			}
+		}
+
+		if (months > 0) {
+
+			if (months == 1) {
+				s += months.ToString () + " month ";
+			} else {
+				s += months.ToString () + " months ";
+			}
+		}
+
+		s += "under #TheIdiotPresident";
+
+		Application.OpenURL (TWITTER_ADDRESS + "?text=" + WWW.EscapeURL (s));
+	}
+
+	public void TwitterScreenshotButtonPressed ()
+	{
+		if (m_RequestTokenResponse == null) {
+			StartCoroutine (Twitter.API.GetRequestToken (CONSUMER_KEY, CONSUMER_SECRET,
+				new Twitter.RequestTokenCallback (this.OnRequestTokenCallback)));
+		}
+	}
+
+	void OnRequestTokenCallback(bool success, Twitter.RequestTokenResponse response)
+	{
+		if (success)
+		{
+			string log = "OnRequestTokenCallback - succeeded";
+			log += "\n    Token : " + response.Token;
+			log += "\n    TokenSecret : " + response.TokenSecret;
+			print(log);
+
+			m_RequestTokenResponse = response;
+
+			Twitter.API.OpenAuthorizationPage(response.Token);
+		}
+		else
+		{
+			print("OnRequestTokenCallback - failed.");
+		}
+	}
+
+	void LoadTwitterUserInfo()
+	{
+//		m_AccessTokenResponse = new Twitter.AccessTokenResponse();
+//
+//		m_AccessTokenResponse.UserId        = PlayerPrefs.GetString(PLAYER_PREFS_TWITTER_USER_ID);
+//		m_AccessTokenResponse.ScreenName    = PlayerPrefs.GetString(PLAYER_PREFS_TWITTER_USER_SCREEN_NAME);
+//		m_AccessTokenResponse.Token         = PlayerPrefs.GetString(PLAYER_PREFS_TWITTER_USER_TOKEN);
+//		m_AccessTokenResponse.TokenSecret   = PlayerPrefs.GetString(PLAYER_PREFS_TWITTER_USER_TOKEN_SECRET);
+//
+//		if (!string.IsNullOrEmpty(m_AccessTokenResponse.Token) &&
+//			!string.IsNullOrEmpty(m_AccessTokenResponse.ScreenName) &&
+//			!string.IsNullOrEmpty(m_AccessTokenResponse.Token) &&
+//			!string.IsNullOrEmpty(m_AccessTokenResponse.TokenSecret))
+//		{
+//			string log = "LoadTwitterUserInfo - succeeded";
+//			log += "\n    UserId : " + m_AccessTokenResponse.UserId;
+//			log += "\n    ScreenName : " + m_AccessTokenResponse.ScreenName;
+//			log += "\n    Token : " + m_AccessTokenResponse.Token;
+//			log += "\n    TokenSecret : " + m_AccessTokenResponse.TokenSecret;
+//			print(log);
+//		}
+	}
+
+	public void PlayAgain ()
+	{
+		AudioManager.instance.PlaySound (AudioManager.SoundType.Button_Click);
+		RestartGame ();
+	}
+
+	public void QuitButtonPressed () {
+
+		AudioManager.instance.PlaySound (AudioManager.SoundType.Button_Click);
+		Application.Quit ();
+	}
+
+	public void DonateButtonPressed () {
+
+		AudioManager.instance.PlaySound (AudioManager.SoundType.Button_Click);
+		Application.OpenURL ("https://action.aclu.org/secure/donate-to-aclu");
 	}
 
 	public List<Stat> stats {get{ return m_stats;}}

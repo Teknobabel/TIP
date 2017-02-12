@@ -97,43 +97,43 @@ public class MenuState_GameOver : MenuState {
 
 	}
 
-	private void UpdateTimeLine ()
-	{
-		while (m_timelinePips.Count > 0) {
-
-			GameObject g = m_timelinePips [0].gameObject;
-			m_timelinePips.RemoveAt (0);
-			Destroy (g);
-
-		}
-
-		for (int i = 0; i < MenuState_GameState.instance.maxTurns; i++) {
-
-			GameObject uiOBJ = (GameObject) Instantiate(m_timelineOBJ, m_timelinePanel);
-			TimelineUI tUI = (TimelineUI)uiOBJ.GetComponent<TimelineUI> ();
-			m_timelinePips.Add (tUI);
-
-			if (i == MenuState_GameState.instance.turnNumber) {
-
-				tUI.SetState (TimelineUI.State.Present);
-			} else if (i < MenuState_GameState.instance.turnNumber) {
-
-				if ( i > 0 && i % 12 == 0) {
-					tUI.SetState (TimelineUI.State.Past_YearMark);
-				} else {
-					tUI.SetState (TimelineUI.State.Past);
-				}
-			} else {
-				if (i % 12 == 0) {
-					tUI.SetState (TimelineUI.State.Future_YearMark);
-				} else {
-					tUI.SetState (TimelineUI.State.Future);
-				}
-			}
-		}
-
-		m_dateText.text = MenuState_GameState.instance.GetDate (MenuState_GameState.instance.turnNumber).ToUpper();
-	}
+//	private void UpdateTimeLine ()
+//	{
+//		while (m_timelinePips.Count > 0) {
+//
+//			GameObject g = m_timelinePips [0].gameObject;
+//			m_timelinePips.RemoveAt (0);
+//			Destroy (g);
+//
+//		}
+//
+//		for (int i = 0; i < MenuState_GameState.instance.maxTurns; i++) {
+//
+//			GameObject uiOBJ = (GameObject) Instantiate(m_timelineOBJ, m_timelinePanel);
+//			TimelineUI tUI = (TimelineUI)uiOBJ.GetComponent<TimelineUI> ();
+//			m_timelinePips.Add (tUI);
+//
+//			if (i == MenuState_GameState.instance.turnNumber) {
+//
+//				tUI.SetState (TimelineUI.State.Present);
+//			} else if (i < MenuState_GameState.instance.turnNumber) {
+//
+//				if ( i > 0 && i % 12 == 0) {
+//					tUI.SetState (TimelineUI.State.Past_YearMark);
+//				} else {
+//					tUI.SetState (TimelineUI.State.Past);
+//				}
+//			} else {
+//				if (i % 12 == 0) {
+//					tUI.SetState (TimelineUI.State.Future_YearMark);
+//				} else {
+//					tUI.SetState (TimelineUI.State.Future);
+//				}
+//			}
+//		}
+//
+//		m_dateText.text = MenuState_GameState.instance.GetDate (MenuState_GameState.instance.turnNumber).ToUpper();
+//	}
 
 	public override void OnHold()
 	{

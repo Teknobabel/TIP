@@ -45,16 +45,19 @@ public class MenuState_Pause : MenuState {
 
 	public override void BackButtonPressed (){
 
+		AudioManager.instance.PlaySound (AudioManager.SoundType.Button_Click);
 		GameManager.instance.PopMenuState ();
 	}
 
 	public void QuitButtonPressed () {
 
+		AudioManager.instance.PlaySound (AudioManager.SoundType.Button_Click);
 		Application.Quit ();
 	}
 
 	public void DonateButtonPressed () {
 
+		AudioManager.instance.PlaySound (AudioManager.SoundType.Button_Click);
 		Application.OpenURL ("https://action.aclu.org/secure/donate-to-aclu");
 	}
 }
