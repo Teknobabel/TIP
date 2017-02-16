@@ -8,6 +8,13 @@ using UnityEngine.Analytics;
 public class MenuState_GameState : MenuState {
 	public static MenuState_GameState instance;
 
+	public enum GameState
+	{
+		None,
+		Gameplay,
+		GameOver,
+	}
+
 	public enum PhoneState
 	{
 		None,
@@ -91,6 +98,8 @@ public class MenuState_GameState : MenuState {
 	m_previousTermTurns = 0;
 
 	private Tweet m_currentTweet = null;
+
+	private GameState m_gameState = GameState.Gameplay;
 
 	private string CONSUMER_KEY = "8FCY5K98HZ4vbC4EWUkrHI0fu";
 	private string CONSUMER_SECRET = "SOiF0UCjj5Y1FH5MhdfeEYcNdyPTJUTybUjm1dNPgng6Iv3X6w";
@@ -763,6 +772,8 @@ public class MenuState_GameState : MenuState {
 	{
 		Debug.Log ("Game Over");
 
+		m_gameState = GameState.GameOver;
+
 		Analytics.CustomEvent("gameOver", new Dictionary<string, object>
 			{
 				{ "stat", s.m_name },
@@ -827,7 +838,10 @@ public class MenuState_GameState : MenuState {
 		} else if (m_phoneState == PhoneState.Up) {
 
 			m_phoneState = PhoneState.Down;
-			m_playerInputAllowed = true;
+
+			if (m_gameState != GameState.GameOver) {
+				m_playerInputAllowed = true;
+			}
 			m_phone.clip = m_phone.GetClip ("Phone_Lower01");
 			m_phone.Play ();
 
@@ -855,6 +869,7 @@ public class MenuState_GameState : MenuState {
 		foreach (Stat s in m_stats) {
 
 			s.SetValue (s.maxScore / 2);
+			s.ui.SetColor (Color.white);
 		}
 
 		if (m_phoneState == PhoneState.Up) {
@@ -877,11 +892,19 @@ public class MenuState_GameState : MenuState {
 
 		m_tweetHeader.m_text.gameObject.SetActive (true);
 
+		// remove game over background
+
 		m_outro.gameObject.SetActive (false);
+
+		// re enable music
+		AudioManager.instance.PlaySound (AudioManager.SoundType.GameStart);
+		m_gameState = GameState.Gameplay;
 
 		EndRound ();
 
 		StartRound ();
+
+		StartCoroutine (EnableInput ());
 	}
 
 	public IEnumerator FourMoreYears ()
@@ -1069,6 +1092,12 @@ public class MenuState_GameState : MenuState {
 
 		AudioManager.instance.PlaySound (AudioManager.SoundType.Button_Click);
 		Application.OpenURL ("https://action.aclu.org/secure/donate-to-aclu");
+	}
+
+	public IEnumerator EnableInput ()
+	{
+		yield return new WaitForSeconds (0.1f);
+		MenuState_GameState.instance.playerInputAllowed = true;
 	}
 
 	public List<Stat> stats {get{ return m_stats;}}

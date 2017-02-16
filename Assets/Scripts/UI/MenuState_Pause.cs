@@ -31,7 +31,13 @@ public class MenuState_Pause : MenuState {
 	{
 		m_pauseMenu.gameObject.SetActive (false);
 
-		MenuState_GameState.instance.playerInputAllowed = m_inputState;
+//		MenuState_GameState.instance.playerInputAllowed = m_inputState;
+
+		if (m_inputState = true) {
+
+			StartCoroutine (MenuState_GameState.instance.EnableInput ());
+		}
+
 		Time.timeScale = 1.0f;
 	}
 

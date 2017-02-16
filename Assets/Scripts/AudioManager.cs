@@ -28,6 +28,7 @@ public class AudioManager : MonoBehaviour {
 		Character_VocalizePositive,
 		Character_VocalizeNegative,
 		Character_VocalizeRandom,
+		GameStart,
 	}
 
 	public AudioSource m_sfxSource;
@@ -203,6 +204,12 @@ public class AudioManager : MonoBehaviour {
 			a = m_gameOverSting;
 			m_musicSource.Stop ();
 			m_sfxSource.PlayOneShot (m_gameOverMusic, m_musicVolume);
+
+			break;
+
+		case SoundType.GameStart:
+			
+			m_musicSource.Play ();
 
 			break;
 		}

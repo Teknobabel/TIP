@@ -11,6 +11,7 @@ public class Target : MonoBehaviour {
 	}
 
 	public TextMesh m_text;
+	public TextMesh m_textDropShadow;
 	public MeshRenderer m_material;
 
 	private Color m_startingColor = Color.magenta;
@@ -31,6 +32,10 @@ public class Target : MonoBehaviour {
 	public void SetTarget (Word w)
 	{
 		m_text.text = w.m_targetName;
+
+		if (m_textDropShadow != null) {
+			m_textDropShadow.text = w.m_targetName;
+		}
 
 		if (w.m_wordType == Word.WordType.Noun) {
 

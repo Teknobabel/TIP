@@ -138,9 +138,11 @@ public class CharacterController : MonoBehaviour {
 		m_currentHead = m_heads[3];
 		m_currentHead.gameObject.SetActive (true);
 
-		m_anim ["rig|rigAction"].time = 3.18f;
-		m_anim ["rig|rigAction"].speed = 0.0f;
-		Debug.Log (m_anim ["rig|rigAction"].time);
+//		m_anim ["rig|rigAction"].time = 3.18f;
+//		m_anim ["rig|rigAction"].speed = 0.0f;
+
+		m_anim.Play ("rig|rigAction0");
+//		Debug.Log (m_anim ["rig|rigAction"].time);
 
 	}
 
