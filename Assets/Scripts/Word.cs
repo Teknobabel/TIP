@@ -43,4 +43,5 @@ public class Word : ScriptableObject {
 	public Response[] m_responseBank;
 	public Affinity[] m_affinities;
 	public bool m_proper = false;
+	public bool m_random = false;
 }

@@ -44,7 +44,7 @@ public class GameManager : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-
+//		Debug.Log (MenuState_GameState.instance.m_playerInputAllowed);
 		if (m_menuState != null) {
 			m_menuState.OnUpdate ();
 		}

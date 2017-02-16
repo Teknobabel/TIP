@@ -79,7 +79,7 @@ public class MenuState_GameState : MenuState {
 	private Word m_currentNoun = null;
 	private Word m_currentVerb = null;
 
-	private bool 
+	public bool 
 	m_playerInputAllowed = false,
 	m_waitingForNextTurn = false;
 
@@ -162,8 +162,8 @@ public class MenuState_GameState : MenuState {
 
 	public override void OnUpdate()
 	{
-//		Debug.Log (m_playerInputAllowed);
-		if (Input.GetKeyDown (KeyCode.Escape)) {
+		
+		if (Input.GetKeyDown (KeyCode.Escape) && m_playerInputAllowed) {
 
 			GameManager.instance.PushMenuState (State.Pause);
 
@@ -171,7 +171,7 @@ public class MenuState_GameState : MenuState {
 //			Debug.Log (Input.mousePosition.y);
 		}
 		else if (Input.anyKeyDown) {
-
+			
 			if (m_phoneState == PhoneState.Up && m_playerInputAllowed) {
 
 				TogglePhone ();
@@ -184,6 +184,7 @@ public class MenuState_GameState : MenuState {
 
 				}
 
+				CharacterController.instance.DartsThrown ();
 				AudioManager.instance.PlaySound (AudioManager.SoundType.Dart_Flight);
 
 				foreach (Dartboard d in m_dartboards) {
@@ -317,6 +318,7 @@ public class MenuState_GameState : MenuState {
 	{
 		m_turnNumber++;
 		UpdateTimeLine ();
+		CharacterController.instance.UpdateFace ();
 
 		foreach (Hand h in m_hands) {
 
@@ -414,6 +416,8 @@ public class MenuState_GameState : MenuState {
 
 	private void SetPhrase (Word n, Word v)
 	{
+		CharacterController.instance.DartsLanded ();
+
 		foreach (Dartboard d in m_dartboards)
 		{
 			d.currentState = Dartboard.State.Hit;
@@ -534,6 +538,8 @@ public class MenuState_GameState : MenuState {
 
 
 		Tweet t = new Tweet ();
+//		t.m_noun = n;
+//		t.m_verb = v;
 		t.m_body = s;
 		t.m_date = GetDate (m_turnNumber);
 		m_currentTweet = t;
@@ -555,7 +561,7 @@ public class MenuState_GameState : MenuState {
 
 		Month m = (Month)(turn);
 
-		String s = m.ToString () + year.ToString ();
+		String s = m.ToString () + " " + year.ToString ();
 		return s;
 	}
 
@@ -603,8 +609,24 @@ public class MenuState_GameState : MenuState {
 		m_tweetList.Add (m_currentTweet.m_id, m_currentTweet);
 		m_currentTweet = null;
 
-//		int incAmount = 15;
-		int incAmount = 1;
+
+		// play audio cue
+
+		if (UnityEngine.Random.Range (0.0f, 1.0f) > 0.8f) {
+			
+			yield return new WaitForSeconds (0.5f);
+
+			if (m_currentNoun.m_random) {
+				AudioManager.instance.PlaySound (AudioManager.SoundType.Character_VocalizeRandom);
+			} else if (m_currentVerb.m_affinities [0].m_quality == Word.WordQuality.Positive) {
+				AudioManager.instance.PlaySound (AudioManager.SoundType.Character_VocalizePositive);
+			} else if (m_currentVerb.m_affinities [0].m_quality == Word.WordQuality.Negative) {
+				AudioManager.instance.PlaySound (AudioManager.SoundType.Character_VocalizeNegative);
+			}
+		}
+
+		int incAmount = 15;
+//		int incAmount = 100;
 		int amt = 0;
 
 		for (int i=0; i < m_currentNoun.m_affinities.Length; i++){
@@ -694,21 +716,19 @@ public class MenuState_GameState : MenuState {
 							break;
 						}
 
+						if (amt > 0) {
+
+							thisStat.ui.SetColor (Color.green);
+
+						} else if (amt < 0) {
+
+							thisStat.ui.SetColor (Color.red);
+						}
+
 						if (thisStat.currentScore == 0 || thisStat.currentScore == thisStat.maxScore) {
 							
 							GameOver (thisStat);
 							yield break;
-
-						} else {
-
-							if (amt > 0) {
-					
-								thisStat.ui.SetColor (Color.green);
-					
-							} else if (amt < 0) {
-								
-								thisStat.ui.SetColor (Color.red);
-							}
 
 						}
 
@@ -750,24 +770,36 @@ public class MenuState_GameState : MenuState {
 				{ "turns", m_turnNumber + m_previousTermTurns },
 			});
 				
-		m_playerInputAllowed = false;
 
-		AudioManager.instance.PlaySound (AudioManager.SoundType.GameOver_Sting);
 
-		string gameOverResults = "";
+		string gameOverResults = "IN " + GetDate(m_turnNumber).ToUpper() + ", " ;
 
 		if (s.currentScore == 100) {
 
-			gameOverResults = s.m_winningStrings [0];
+			gameOverResults += s.m_winningStrings [0];
 		} else if (s.currentScore == 0) {
-			gameOverResults = s.m_losingStrings [0];
+			gameOverResults += s.m_losingStrings [0];
 		}
 
 		m_gameOverResults.text = gameOverResults;
 
-		m_outro.gameObject.SetActive (true);
-		m_outro.Play ();
+		StartCoroutine (GameOverAnimation ());
 	}
+
+	public IEnumerator GameOverAnimation () {
+
+		m_playerInputAllowed = false;
+
+		AudioManager.instance.PlaySound (AudioManager.SoundType.GameOver_Sting);
+
+		yield return new WaitForSeconds (3.0f);
+
+		m_outro.gameObject.SetActive (true);
+		TogglePhone ();
+		m_outro.Play ();
+
+	}
+
 
 	public void PhoneButtonPressed ()
 	{
@@ -844,6 +876,8 @@ public class MenuState_GameState : MenuState {
 		// renable empty feed state
 
 		m_tweetHeader.m_text.gameObject.SetActive (true);
+
+		m_outro.gameObject.SetActive (false);
 
 		EndRound ();
 

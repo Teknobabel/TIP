@@ -24,6 +24,10 @@ public class AudioManager : MonoBehaviour {
 		Curtain_Raise,
 		GameOver_Sting,
 		Button_Click,
+		Character_Vocalize,
+		Character_VocalizePositive,
+		Character_VocalizeNegative,
+		Character_VocalizeRandom,
 	}
 
 	public AudioSource m_sfxSource;
@@ -34,6 +38,10 @@ public class AudioManager : MonoBehaviour {
 	public AudioClip[] m_targetFlip;
 	public AudioClip[] m_tweetSent;
 	public AudioClip[] m_phoneRaise;
+	public AudioClip[] m_vocalizations;
+	public AudioClip[] m_vocalizations_Positive;
+	public AudioClip[] m_vocalizations_Negative;
+	public AudioClip[] m_vocalizations_Random;
 	public AudioClip m_democracy;
 	public AudioClip m_capitalism;
 	public AudioClip m_law;
@@ -98,6 +106,30 @@ public class AudioManager : MonoBehaviour {
 //			pitch = 1.0f;
 			a = m_tweetSent [Random.Range (0, m_tweetSent.Length)];
 			volume = m_sfxVolume;
+
+			break;
+		case SoundType.Character_Vocalize:
+
+			a = m_vocalizations [Random.Range (0, m_vocalizations.Length)];
+			volume = m_sfxVolume*0.2f;
+
+			break;
+		case SoundType.Character_VocalizePositive:
+
+			a = m_vocalizations_Positive [Random.Range (0, m_vocalizations_Positive.Length)];
+			volume = m_sfxVolume*0.2f;
+
+			break;
+		case SoundType.Character_VocalizeNegative:
+
+			a = m_vocalizations_Negative [Random.Range (0, m_vocalizations_Negative.Length)];
+			volume = m_sfxVolume*0.2f;
+
+			break;
+		case SoundType.Character_VocalizeRandom:
+
+			a = m_vocalizations_Random [Random.Range (0, m_vocalizations_Random.Length)];
+			volume = m_sfxVolume*0.2f;
 
 			break;
 		case SoundType.Phone_Raise:
