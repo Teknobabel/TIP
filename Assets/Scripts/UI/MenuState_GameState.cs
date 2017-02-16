@@ -68,6 +68,8 @@ public class MenuState_GameState : MenuState {
 
 	public TweetUI m_tweetHeader;
 
+	public Texture[] m_tweetPortraitStates;
+
 //	public String[] m_mumbles;
 
 //	public Response[] m_responseBank;
@@ -586,7 +588,7 @@ public class MenuState_GameState : MenuState {
 		foreach (TweetUI tUI in m_tweets) {
 
 			Tweet thisTweet = m_tweetList[tUI.m_ID];
-			tUI.Tweet (thisTweet);
+			tUI.Tweet (thisTweet, tUI.m_portrait.texture);
 		}
 
 		yield return new WaitForSeconds (1.0f);
@@ -612,7 +614,29 @@ public class MenuState_GameState : MenuState {
 		AudioManager.instance.PlaySound (AudioManager.SoundType.Tweet_Sent);
 
 		TweetUI t = newTweetOBJ.GetComponent<TweetUI> ();
-		t.Tweet (m_currentTweet);
+
+		// get face state
+
+		Texture tex = m_tweetPortraitStates[0];
+
+		switch (CharacterController.instance.currentFaceState) {
+
+		case CharacterController.FaceState.Uncertain:
+			tex = m_tweetPortraitStates[1];
+			break;
+		case CharacterController.FaceState.Distraught:
+			tex = m_tweetPortraitStates[2];
+			break;
+		case CharacterController.FaceState.Anger:
+			tex = m_tweetPortraitStates[3];
+			break;
+		case CharacterController.FaceState.Fear:
+			tex = m_tweetPortraitStates[4];
+			break;
+
+		}
+
+		t.Tweet (m_currentTweet, tex);
 		m_tweets.Add (t);
 
 		m_tweetList.Add (m_currentTweet.m_id, m_currentTweet);
@@ -930,7 +954,7 @@ public class MenuState_GameState : MenuState {
 		newTweetOBJ.transform.SetSiblingIndex (1);
 
 		TweetUI t = newTweetOBJ.GetComponent<TweetUI> ();
-		t.Tweet (m_currentTweet);
+		t.Tweet (m_currentTweet, m_tweetPortraitStates[5]);
 		m_tweets.Add (t);
 
 		m_tweetList.Add (m_currentTweet.m_id, m_currentTweet);

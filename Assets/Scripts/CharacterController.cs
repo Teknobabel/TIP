@@ -11,6 +11,16 @@ public class CharacterController : MonoBehaviour {
 		NotBlinking,
 	}
 
+	public enum FaceState {
+
+		Normal,
+		Uncertain,
+		Distraught,
+		Anger,
+		Fear,
+		Oops,
+	}
+
 	public Transform[] 
 	m_eyeStates,
 	m_heads;
@@ -27,6 +37,7 @@ public class CharacterController : MonoBehaviour {
 
 	private BlinkState m_blinkState = BlinkState.NotBlinking;
 	private Transform m_currentHead = null;
+	private FaceState m_currentFaceState = FaceState.Normal;
 
 	void Awake ()
 	{
@@ -102,13 +113,30 @@ public class CharacterController : MonoBehaviour {
 		}
 
 		if (distanceToGameOver >= 30) {
+			
 			m_currentHead = m_heads [0];
+			m_currentFaceState = FaceState.Normal;
+
 		} else if (distanceToGameOver >= 24) {
+			
 			m_currentHead = m_heads [1];
-		} else if (distanceToGameOver >= 8) {
+			m_currentFaceState = FaceState.Uncertain;
+
+		} else if (distanceToGameOver >= 16) {
+
+			m_currentHead = m_heads [2];
+			m_currentFaceState = FaceState.Distraught;
+
+		}
+		else if (distanceToGameOver >= 8) {
+			
 			m_currentHead = m_heads [4];
+			m_currentFaceState = FaceState.Anger;
+
 		} else {
+			
 			m_currentHead = m_heads [5];
+			m_currentFaceState = FaceState.Fear;
 		}
 
 		m_currentHead.gameObject.SetActive (true);
@@ -152,4 +180,6 @@ public class CharacterController : MonoBehaviour {
 //		m_currentHead = m_heads[3];
 //		m_currentHead.gameObject.SetActive (true);
 	}
+
+	public FaceState currentFaceState {get{ return m_currentFaceState;}}
 }

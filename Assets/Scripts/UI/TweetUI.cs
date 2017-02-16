@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using TMPro;
+using UnityEngine.UI;
 
 public class TweetUI : MonoBehaviour {
 
@@ -10,10 +11,14 @@ public class TweetUI : MonoBehaviour {
 	m_retweets,
 	m_favs;
 
+	public RawImage m_portrait;
+
 	public int m_ID = -1;
 
-	public void Tweet (Tweet t)
+	public void Tweet (Tweet t, Texture portrait)
 	{
+		m_portrait.texture = portrait;
+
 		string s = t.m_body;
 		m_text.text = s;
 		m_ID = t.m_id;
