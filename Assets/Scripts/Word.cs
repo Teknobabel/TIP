@@ -28,7 +28,12 @@ public class Word : ScriptableObject {
 		Negative,
 	}
 
-
+	[System.Serializable]
+	public class SpecificResponse
+	{
+		public Word m_noun;
+		public WordQuality m_quality;
+	}
 
 	[System.Serializable]
 	public class Affinity
@@ -42,6 +47,7 @@ public class Word : ScriptableObject {
 //	public string[] m_responses;
 	public Response[] m_responseBank;
 	public Affinity[] m_affinities;
+	public SpecificResponse[] m_specificResponses;
 	public bool m_proper = false;
 	public bool m_random = false;
 }

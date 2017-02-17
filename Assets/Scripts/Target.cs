@@ -100,7 +100,7 @@ public class Target : MonoBehaviour {
 
 			d.DartLand ();
 
-			if (m_noun != null && d.m_dartType == Word.WordType.Noun) {
+			if (m_noun != null && d.m_dartType == Word.WordType.Noun && MenuState_GameState.instance.currentNoun == null) {
 
 				MenuState_GameState.instance.SetNoun (m_noun);
 
@@ -112,7 +112,7 @@ public class Target : MonoBehaviour {
 					ChangeState (State.Active);
 				}
 
-			} else if (m_verb != null && d.m_dartType == Word.WordType.Verb) {
+			} else if (m_verb != null && d.m_dartType == Word.WordType.Verb && MenuState_GameState.instance.currentVerb == null) {
 				
 				MenuState_GameState.instance.SetVerb (m_verb);
 

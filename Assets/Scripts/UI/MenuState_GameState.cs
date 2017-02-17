@@ -132,6 +132,7 @@ public class MenuState_GameState : MenuState {
 
 			// create UI
 			GameObject uiOBJ = (GameObject) Instantiate(m_statOBJ, m_statPanel);
+			uiOBJ.transform.localScale = Vector3.one;
 			StatUI st = (StatUI)uiOBJ.GetComponent<StatUI> ();
 
 			s.Initialize (st );
@@ -174,12 +175,17 @@ public class MenuState_GameState : MenuState {
 	public override void OnUpdate()
 	{
 		
-		if (Input.GetKeyDown (KeyCode.Escape) && m_playerInputAllowed) {
+		if (Input.GetKeyDown (KeyCode.Escape) && m_gameState != GameState.GameOver) {
 
 			GameManager.instance.PushMenuState (State.Pause);
 
 		} else if (Input.GetMouseButtonDown (0) && (Input.mousePosition.y < 50 || m_phoneState == PhoneState.Up)) {
 //			Debug.Log (Input.mousePosition.y);
+
+			if (m_phoneState == PhoneState.Up && m_playerInputAllowed) {
+
+				TogglePhone ();
+			}
 		}
 		else if (Input.anyKeyDown) {
 			
@@ -227,6 +233,7 @@ public class MenuState_GameState : MenuState {
 		for (int i = 0; i < m_maxTurns; i++) {
 
 			GameObject uiOBJ = (GameObject) Instantiate(m_timelineOBJ, m_timelinePanel);
+			uiOBJ.transform.localScale = Vector3.one;
 			TimelineUI tUI = (TimelineUI)uiOBJ.GetComponent<TimelineUI> ();
 			m_timelinePips.Add (tUI);
 
@@ -259,13 +266,9 @@ public class MenuState_GameState : MenuState {
 		List<Word> n = new List<Word> ();
 		List<Word> selectedNoun = new List<Word> ();
 
-//		Array nounEnums = Enum.GetValues(typeof(Noun));
-
 		foreach( Word val in GameManager.instance.m_nouns )
 		{
-//			if (val != Noun.None && val != Noun.TargetMiss) {
 				n.Add (val);
-//			}
 		}
 
 		for (int i = 0; i < 4; i++) {
@@ -273,6 +276,8 @@ public class MenuState_GameState : MenuState {
 			int rand = UnityEngine.Random.Range (0, n.Count);
 			selectedNoun.Add (n [rand]);
 			n.RemoveAt (rand);
+
+//			selectedNoun.Add(GameManager.instance.m_nouns[31]);
 		}
 
 		m_dartboards [0].SetNoun (selectedNoun);
@@ -280,13 +285,9 @@ public class MenuState_GameState : MenuState {
 		List<Word> v = new List<Word> ();
 		List<Word> selectedVerb = new List<Word> ();
 
-//		Array verbEnums = Enum.GetValues(typeof(Verb));
-
 		foreach( Word val in GameManager.instance.m_verbs )
 		{
-//			if (val != Verb.None && val != Verb.TargetMiss) {
-				v.Add (val);
-//			}
+			v.Add (val);
 		}
 
 		for (int i = 0; i < 4; i++) {
@@ -294,6 +295,8 @@ public class MenuState_GameState : MenuState {
 			int rand = UnityEngine.Random.Range (0, v.Count);
 			selectedVerb.Add (v [rand]);
 			v.RemoveAt (rand);
+
+//			selectedVerb.Add (GameManager.instance.m_verbs[18]);
 		}
 
 		m_dartboards [1].SetVerb (selectedVerb);
@@ -662,6 +665,7 @@ public class MenuState_GameState : MenuState {
 //		int incAmount = 100;
 		int amt = 0;
 
+
 		for (int i=0; i < m_currentNoun.m_affinities.Length; i++){
 
 			Word.Affinity af = m_currentNoun.m_affinities [i];
@@ -675,29 +679,55 @@ public class MenuState_GameState : MenuState {
 
 			Word.Affinity vAf = m_currentVerb.m_affinities [0];
 
-			if (af.m_quality == Word.WordQuality.Negative && vAf.m_quality == Word.WordQuality.Negative) {
+			bool specificResponse = false;
 
-				amt = incAmount;
+			// uncomment and fix if specific responses are needed
 
-			} else if (af.m_quality == Word.WordQuality.Positive && vAf.m_quality == Word.WordQuality.Negative) {
+//			if (m_currentVerb.m_specificResponses.Length > 0) {
+//
+//				foreach (Word.SpecificResponse s in m_currentVerb.m_specificResponses) {
+//
+//					if (s.m_noun == m_currentNoun) {
+//						Debug.Log ("SPECIFIC RESPONSE");
+//						if (s.m_quality == Word.WordQuality.Negative) {
+//							
+//							amt = incAmount*-1;
+//						} else if (s.m_quality == Word.WordQuality.Positive) {
+//							amt = incAmount;
+//						}
+//						specificResponse = true;
+//						break;
+//					}
+//				}
+//
+//			}
 
-				amt = incAmount*-1;
+			if (!specificResponse) {
+				
+				if (af.m_quality == Word.WordQuality.Negative && vAf.m_quality == Word.WordQuality.Negative) {
 
-			} else if (af.m_quality == Word.WordQuality.Negative && vAf.m_quality == Word.WordQuality.Positive) {
+					amt = incAmount;
 
-				amt = incAmount*-1;
+				} else if (af.m_quality == Word.WordQuality.Positive && vAf.m_quality == Word.WordQuality.Negative) {
 
-			} else if (af.m_quality == Word.WordQuality.Positive && vAf.m_quality == Word.WordQuality.Positive) {
+					amt = incAmount * -1;
 
-				amt = incAmount;
+				} else if (af.m_quality == Word.WordQuality.Negative && vAf.m_quality == Word.WordQuality.Positive) {
 
-			} else if (af.m_quality == Word.WordQuality.Positive) {
+					amt = incAmount * -1;
 
-				amt = incAmount;
+				} else if (af.m_quality == Word.WordQuality.Positive && vAf.m_quality == Word.WordQuality.Positive) {
 
-			} else if (af.m_quality == Word.WordQuality.Negative) {
+					amt = incAmount;
 
-				amt = incAmount*-1;
+				} else if (af.m_quality == Word.WordQuality.Positive) {
+
+					amt = incAmount;
+
+				} else if (af.m_quality == Word.WordQuality.Negative) {
+
+					amt = incAmount * -1;
+				}
 			}
 
 			if (amt != 0) {
@@ -1129,4 +1159,6 @@ public class MenuState_GameState : MenuState {
 	public int maxTurns {get{return m_maxTurns;}}
 	public int previousTermTurns {get{return m_previousTermTurns;}}
 	public bool playerInputAllowed {get{return m_playerInputAllowed;} set{ m_playerInputAllowed = value; }}
+	public Word currentNoun {get{return m_currentNoun;}}
+	public Word currentVerb {get{return m_currentVerb;}}
 }

@@ -49,21 +49,23 @@ public class Hand : MonoBehaviour {
 	public void ChangeState (State newState)
 	{
 		m_state = newState;
-		Debug.Log (newState);
+
 		switch (newState) {
 
 		case State.Moving:
+			
 			m_anim ["Hand_Movement01"].speed = Random.Range (m_minSpeed, m_maxSpeed);
 			m_anim.Play ();
 			m_handStates [0].gameObject.SetActive (true);
 			m_handStates [1].gameObject.SetActive (false);
+
 			break;
 		case State.Waiting:
+			
 			m_anim.Stop ();
-//			m_anim ["Hand_Movement01"].speed = 0;
 			m_handStates [0].gameObject.SetActive (false);
 			m_handStates [1].gameObject.SetActive (true);
-			Debug.Log (m_anim ["Hand_Movement01"].speed);
+
 			break;
 		}
 	}
