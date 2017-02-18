@@ -732,7 +732,7 @@ public class MenuState_GameState : MenuState {
 		}
 
 		int incAmount = 15;
-//		int incAmount = 100;
+//		int incAmount = 1;
 		int amt = 0;
 
 
@@ -877,10 +877,10 @@ public class MenuState_GameState : MenuState {
 
 		// check if at end of timeline, four more years if so
 
-		if (m_turnNumber == m_maxTurns) {
-
-			yield return StartCoroutine (FourMoreYears ());
-		}
+//		if (m_turnNumber+1 == m_maxTurns) {
+//
+//			yield return StartCoroutine (FourMoreYears ());
+//		}
 
 		m_playerInputAllowed = true;
 		m_waitingForNextTurn = true;
@@ -952,6 +952,22 @@ public class MenuState_GameState : MenuState {
 
 		} else if (m_phoneState == PhoneState.Up) {
 
+			if (m_waitingForNextTurn) {
+
+				if (m_turnNumber + 1 == m_maxTurns) {
+		
+					StartCoroutine (FourMoreYears ());
+					return;
+
+				} else {
+
+					m_waitingForNextTurn = false;
+					EndRound ();
+
+					StartRound ();
+				}
+			}
+
 			m_phoneState = PhoneState.Down;
 
 			if (m_gameState != GameState.GameOver) {
@@ -962,13 +978,13 @@ public class MenuState_GameState : MenuState {
 
 			AudioManager.instance.PlaySound (AudioManager.SoundType.Phone_Raise);
 
-			if (m_waitingForNextTurn) {
-
-				m_waitingForNextTurn = false;
-				EndRound ();
-
-				StartRound ();
-			}
+//			if (m_waitingForNextTurn) {
+//
+//				m_waitingForNextTurn = false;
+//				EndRound ();
+//
+//				StartRound ();
+//			}
 
 		}
 	}
@@ -1022,10 +1038,13 @@ public class MenuState_GameState : MenuState {
 	{
 		// if the player reaches the end of the timeline, Drumpf gives himself four more years and resets the timeline
 
-		m_phone.clip = m_phone.GetClip ("Phone_Raise01");
-		m_phone.Play ();
+		m_playerInputAllowed = false;
 
-		yield return new WaitForSeconds (1.0f);
+		AudioManager.instance.PlaySound (AudioManager.SoundType.Reelection);
+
+		yield return new WaitForSeconds (0.75f);
+
+		AudioManager.instance.PlaySound (AudioManager.SoundType.Character_VocalizePositive);
 
 		Tweet thisT = new Tweet ();
 		thisT.m_body = "FOUR MORE YEARS!!!";
@@ -1040,7 +1059,7 @@ public class MenuState_GameState : MenuState {
 		newTweetOBJ.transform.localEulerAngles = Vector3.zero;
 		newTweetOBJ.transform.localPosition = Vector3.zero;
 
-		newTweetOBJ.transform.SetSiblingIndex (1);
+		newTweetOBJ.transform.SetAsFirstSibling ();
 
 		TweetUI t = newTweetOBJ.GetComponent<TweetUI> ();
 		t.Tweet (m_currentTweet, m_tweetPortraitStates[5]);
@@ -1051,15 +1070,10 @@ public class MenuState_GameState : MenuState {
 
 		yield return new WaitForSeconds (1.0f);
 
-		m_phone.clip = m_phone.GetClip ("Phone_Lower01");
-		m_phone.Play ();
+		m_previousTermTurns += m_maxTurns;
+		m_turnNumber = -1;
 
-		yield return new WaitForSeconds (1.0f);
-
-		m_previousTermTurns = m_turnNumber;
-		m_turnNumber = 0;
-
-		UpdateTimeLine ();
+		m_playerInputAllowed = true;
 
 		yield return true;
 	}

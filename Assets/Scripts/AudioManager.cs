@@ -29,6 +29,7 @@ public class AudioManager : MonoBehaviour {
 		Character_VocalizeNegative,
 		Character_VocalizeRandom,
 		GameStart,
+		Reelection,
 	}
 
 	public AudioSource m_sfxSource;
@@ -54,6 +55,7 @@ public class AudioManager : MonoBehaviour {
 	public AudioClip m_gameOverSting;
 	public AudioClip m_gameOverMusic;
 	public AudioClip m_buttonClick;
+	public AudioClip m_reelectionSting;
 
 	private float m_sfxVolume = 1.0f;
 	private float m_musicVolume = 1.0f;
@@ -95,6 +97,13 @@ public class AudioManager : MonoBehaviour {
 		case SoundType.Tweet_Sent:
 
 			a = m_tweetSent [Random.Range (0, m_tweetSent.Length)];
+			volume = m_sfxVolume;
+
+			break;
+
+		case SoundType.Reelection:
+
+			a = m_reelectionSting;
 			volume = m_sfxVolume;
 
 			break;
