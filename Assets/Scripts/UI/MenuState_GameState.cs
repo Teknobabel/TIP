@@ -174,13 +174,62 @@ public class MenuState_GameState : MenuState {
 
 	public override void OnUpdate()
 	{
-		
+
+		#if UNITY_IOS
+
+		if (Input.touches.Length > 0)
+		{
+			if (Input.touches[0].phase == TouchPhase.Ended)
+			{
+
+				if (Input.mousePosition.y < 50 || m_phoneState == PhoneState.Up)
+				{
+					if (m_phoneState == PhoneState.Up && m_playerInputAllowed) {
+
+						TogglePhone ();
+					}
+				} else {
+
+					if (m_phoneState == PhoneState.Up && m_playerInputAllowed) {
+
+						TogglePhone ();
+
+					} else if (m_playerInputAllowed) {
+
+						foreach (Hand h in m_hands) {
+
+							h.ThrowDart ();
+
+						}
+
+						CharacterController.instance.DartsThrown ();
+						AudioManager.instance.PlaySound (AudioManager.SoundType.Dart_Flight);
+
+						foreach (Dartboard d in m_dartboards) {
+
+							float flipChance = 0.1f;
+
+							if (!d.flipped && MenuState_GameState.instance.turnNumber > 3 && UnityEngine.Random.Range (0.0f, 1.0f) <= flipChance) {
+
+								d.ToggleTargetFlip ();
+							}
+						}
+
+						m_playerInputAllowed = false;
+					}
+				}
+			}
+		}
+
+
+
+		#else
+
 		if (Input.GetKeyDown (KeyCode.Escape) && m_gameState != GameState.GameOver) {
 
 			GameManager.instance.PushMenuState (State.Pause);
 
 		} else if (Input.GetMouseButtonDown (0) && (Input.mousePosition.y < 50 || m_phoneState == PhoneState.Up)) {
-//			Debug.Log (Input.mousePosition.y);
 
 			if (m_phoneState == PhoneState.Up && m_playerInputAllowed) {
 
@@ -217,7 +266,7 @@ public class MenuState_GameState : MenuState {
 				m_playerInputAllowed = false;
 			}
 		} 
-			
+		#endif
 	}
 
 	private void UpdateTimeLine ()

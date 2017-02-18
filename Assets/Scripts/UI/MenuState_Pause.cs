@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
+using TMPro;
 
 public class MenuState_Pause : MenuState {
 
 	public Transform m_pauseMenu;
+
+	public TextMeshProUGUI m_versionNumber;
 
 	private bool m_inputState = false;
 
@@ -15,6 +18,8 @@ public class MenuState_Pause : MenuState {
 		MenuState_GameState.instance.playerInputAllowed = false;
 
 		m_pauseMenu.gameObject.SetActive (true);
+
+		m_versionNumber.text = GameManager.instance.versionNumber;
 	}
 
 	public override void OnHold()

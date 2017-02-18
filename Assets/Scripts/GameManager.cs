@@ -20,6 +20,8 @@ public class GameManager : MonoBehaviour {
 
 	private int m_newID = 0;
 
+	private string m_versionNumber = "Version 0.1.0";
+
 	void Awake ()
 	{
 		Application.targetFrameRate = 60;
@@ -98,4 +100,5 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public int newID {get{ m_newID++; return m_newID; }}
+	public string versionNumber {get{ return m_versionNumber; }}
 }
