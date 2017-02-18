@@ -11,11 +11,6 @@ public class Dart : MonoBehaviour {
 
 	public Word.WordType m_dartType = Word.WordType.None;
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-
 	public void DartThrow ()
 	{
 		m_trail.gameObject.SetActive (true);
@@ -28,16 +23,5 @@ public class Dart : MonoBehaviour {
 
 		AudioManager.instance.PlaySound (AudioManager.SoundType.Dart_HitTarget);
 
-//		m_trail.gameObject.SetActive (false);
 	}
-
-	public void DartMiss ()
-	{
-
-	}
-	
-//	// Update is called once per frame
-//	void Update () {
-//	
-//	}
 }

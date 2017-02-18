@@ -19,7 +19,6 @@ public class Stat : ScriptableObject  {
 
 	public void Initialize (StatUI s)
 	{
-//		Debug.Log (m_currentScore);
 		m_ui = s;
 		s.m_stat = this;
 		s.m_statname.text = m_name.ToUpper();

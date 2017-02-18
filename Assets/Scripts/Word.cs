@@ -44,7 +44,6 @@ public class Word : ScriptableObject {
 
 	public string m_targetName;
 	public WordType m_wordType;
-//	public string[] m_responses;
 	public Response[] m_responseBank;
 	public Affinity[] m_affinities;
 	public SpecificResponse[] m_specificResponses;

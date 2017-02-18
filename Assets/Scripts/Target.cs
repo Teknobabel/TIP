@@ -47,18 +47,6 @@ public class Target : MonoBehaviour {
 		}
 	}
 
-//	public void SetTarget (MenuState_GameState.Noun n)
-//	{
-//		m_text.text = n.ToString ();
-//		m_noun = n;
-//	}
-//
-//	public void SetTarget (MenuState_GameState.Verb v)
-//	{
-//		m_text.text = v.ToString ();
-//		m_verb = v;
-//	}
-
 	public void ChangeState (State newState)
 	{
 		m_state = newState;
@@ -127,8 +115,6 @@ public class Target : MonoBehaviour {
 			{
 				MenuState_GameState.instance.DartMissed (d);
 			}
-
-
 		}
 	}
 

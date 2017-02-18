@@ -39,7 +39,6 @@ public class AudioManager : MonoBehaviour {
 	public AudioClip[] m_targetFlip;
 	public AudioClip[] m_tweetSent;
 	public AudioClip[] m_phoneRaise;
-	public AudioClip[] m_vocalizations;
 	public AudioClip[] m_vocalizations_Positive;
 	public AudioClip[] m_vocalizations_Negative;
 	public AudioClip[] m_vocalizations_Random;
@@ -68,22 +67,15 @@ public class AudioManager : MonoBehaviour {
 		}
 	}
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-
 	public void PlaySound (SoundType s)
 	{
 		AudioClip a = null;
-//		float pitch = 1.0f;
 		float volume = 1.0f;
 
 		switch (s)
 		{
 		case SoundType.Dart_Flight:
 
-//			pitch = 1.0f;
 			a = m_dartFly [Random.Range (0, m_dartFly.Length)];
 			volume = m_sfxVolume * 0.3f;
 
@@ -91,30 +83,22 @@ public class AudioManager : MonoBehaviour {
 		case SoundType.Dart_HitTarget:
 
 			a = m_dartHit [Random.Range (0, m_dartHit.Length)];
-//			pitch = Random.Range (0.75f, 1.25f);
 			volume = m_sfxVolume * 0.5f;
 
 			break;
 		case SoundType.Target_Flip:
 
-//			pitch = 1.0f;
 			a = m_targetFlip [Random.Range (0, m_targetFlip.Length)];
 			volume = m_sfxVolume;
 
 			break;
 		case SoundType.Tweet_Sent:
 
-//			pitch = 1.0f;
 			a = m_tweetSent [Random.Range (0, m_tweetSent.Length)];
 			volume = m_sfxVolume;
 
 			break;
-		case SoundType.Character_Vocalize:
 
-			a = m_vocalizations [Random.Range (0, m_vocalizations.Length)];
-			volume = m_sfxVolume*0.2f;
-
-			break;
 		case SoundType.Character_VocalizePositive:
 
 			a = m_vocalizations_Positive [Random.Range (0, m_vocalizations_Positive.Length)];
@@ -131,12 +115,6 @@ public class AudioManager : MonoBehaviour {
 
 			a = m_vocalizations_Random [Random.Range (0, m_vocalizations_Random.Length)];
 			volume = m_sfxVolume*0.2f;
-
-			break;
-		case SoundType.Phone_Raise:
-
-//			a = m_phoneRaise [Random.Range (0, m_phoneRaise.Length)];
-//			m_sfxSource.PlayOneShot (a, m_sfxVolume * 0.05f);
 
 			break;
 		case SoundType.Democracy_Decrease:
@@ -216,13 +194,7 @@ public class AudioManager : MonoBehaviour {
 
 		if (a != null) {
 
-//			m_sfxSource.pitch = pitch;
 			m_sfxSource.PlayOneShot (a, volume);
 		}
 	}
-	
-	// Update is called once per frame
-//	void Update () {
-//	
-//	}
 }

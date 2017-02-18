@@ -8,7 +8,11 @@ using DG.Tweening;
 public class GameManager : MonoBehaviour {
 	public static GameManager instance;
 
+	// Debug 
+
 	public bool m_skipIntro = false;
+
+	// Bank of scriptableobjects for game to pull from each round
 
 	public Word[] m_verbs;
 	public Word[] m_nouns;
@@ -33,7 +37,6 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
-	// Use this for initialization
 	void Start () {
 
 		DOTween.Init ();

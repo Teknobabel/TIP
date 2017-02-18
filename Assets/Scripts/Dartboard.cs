@@ -27,11 +27,6 @@ public class Dartboard : MonoBehaviour {
 
 	private bool m_flipped = false;
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-
 	public void SetNoun (List<Word> n)
 	{
 		for (int i = 0; i < m_targets.Length; i++) {
@@ -56,8 +51,6 @@ public class Dartboard : MonoBehaviour {
 
 	public void ToggleTargetFlip ()
 	{
-//		Debug.Log ("toggleflip");
-
 		AudioManager.instance.PlaySound (AudioManager.SoundType.Target_Flip);
 
 		if (!m_flipped && m_targetFlipAnimation != null) {

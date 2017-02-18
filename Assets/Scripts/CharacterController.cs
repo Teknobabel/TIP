@@ -147,38 +147,18 @@ public class CharacterController : MonoBehaviour {
 
 	public void DartsLanded ()
 	{
-//		m_currentHead.gameObject.SetActive (false);
-//
-//		List<Transform> tList = new List<Transform> ();
-////		tList.Add (m_heads [0]);
-////		tList.Add (m_heads [0]);
-//		tList.Add (m_heads [0]);
-//		tList.Add (m_heads [1]);
-//		tList.Add (m_heads [2]);
-//		tList.Add (m_heads [3]);
-//		tList.Add (m_heads [4]);
-//		tList.Add (m_heads [5]);
-//
-//		m_currentHead = tList [Random.Range(0, tList.Count)];
-//		m_currentHead.gameObject.SetActive (true);
-
 		m_currentHead.gameObject.SetActive (false);
 		m_currentHead = m_heads[3];
 		m_currentHead.gameObject.SetActive (true);
 
-//		m_anim ["rig|rigAction"].time = 3.18f;
-//		m_anim ["rig|rigAction"].speed = 0.0f;
-
 		m_anim.Play ("rig|rigAction0");
-//		Debug.Log (m_anim ["rig|rigAction"].time);
-
 	}
 
 	public void DartsThrown ()
 	{
-//		m_currentHead.gameObject.SetActive (false);
-//		m_currentHead = m_heads[3];
-//		m_currentHead.gameObject.SetActive (true);
+		m_currentHead.gameObject.SetActive (false);
+		m_currentHead = m_heads[1];
+		m_currentHead.gameObject.SetActive (true);
 	}
 
 	public FaceState currentFaceState {get{ return m_currentFaceState;}}
