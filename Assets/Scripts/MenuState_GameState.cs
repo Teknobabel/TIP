@@ -732,7 +732,7 @@ public class MenuState_GameState : MenuState {
 		}
 
 		int incAmount = 15;
-//		int incAmount = 1;
+//		int incAmount = 100;
 		int amt = 0;
 
 
