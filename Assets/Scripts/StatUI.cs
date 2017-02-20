@@ -35,6 +35,11 @@ public class StatUI : MonoBehaviour {
 
 	}
 
+	public void SetBorderColor (Color newColor)
+	{
+		m_iconBorder.color = newColor;
+	}
+
 	public void SetColor (Color newColor)
 	{
 		m_icon.color = newColor;

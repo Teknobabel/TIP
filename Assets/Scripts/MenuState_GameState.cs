@@ -844,20 +844,45 @@ public class MenuState_GameState : MenuState {
 							break;
 						}
 
-						if (amt > 0) {
+//						if (amt > 0) {
+//
+//							thisStat.ui.SetColor (Color.green);
+//
+//						} else if (amt < 0) {
+//
+//							thisStat.ui.SetColor (Color.red);
+//						}
+//						if (amt != 0) {
 
-							thisStat.ui.SetColor (Color.green);
 
-						} else if (amt < 0) {
-
-							thisStat.ui.SetColor (Color.red);
-						}
+//							if (amt == 0 || amt == 100) {
+//
+//								thisStat.ui.SetColor (Color.red);
+//
+//							} else {
+								
+//								thisStat.ui.SetBorderColor (Color.red);
+//							}
+//						}
 
 						if (thisStat.currentScore == 0 || thisStat.currentScore == thisStat.maxScore) {
-							
+
+							foreach (Stat s in m_stats) {
+
+//								if (s != thisStat) {
+
+									thisStat.ui.SetColor (Color.white);
+//								}
+							}
+
+							thisStat.ui.SetColor (Color.red);
+
 							GameOver (thisStat);
 							yield break;
 
+						} else if (amt != 0 && m_gameState != GameState.GameOver) {
+
+							thisStat.ui.SetBorderColor (Color.red);
 						}
 
 						break;
