@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour {
 
 	private int m_newID = 0;
 
-	private string m_versionNumber = "Version 0.1.1";
+	private string m_versionNumber = "Version 0.1.3";
 
 	void Awake ()
 	{
