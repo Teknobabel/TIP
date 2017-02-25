@@ -144,7 +144,7 @@ public class MenuState_GameState : MenuState {
 		} else {
 
 			m_introPanel.gameObject.SetActive (false);
-			m_titleText.gameObject.SetActive (true);
+//			m_titleText.gameObject.SetActive (true);
 
 			UpdateTimeLine ();
 
@@ -1114,14 +1114,14 @@ public class MenuState_GameState : MenuState {
 		m_intro.Play ();
 
 
-		yield return new WaitForSeconds (2.5f);
+//		yield return new WaitForSeconds (2.5f);
 
 		AudioManager.instance.PlaySound (AudioManager.SoundType.Curtain_Raise);
 
 		yield return new WaitForSeconds (2.5f);
 
 		m_introPanel.gameObject.SetActive (false);
-		m_titleText.gameObject.SetActive (true);
+//		m_titleText.gameObject.SetActive (true);
 
 		m_playerInputAllowed = true;
 		

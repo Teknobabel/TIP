@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
 
@@ -18,6 +19,11 @@ public class GameManager : MonoBehaviour {
 	public Word[] m_nouns;
 
 	public MenuState[] m_menuStates;
+
+	public Transform[] m_shiftableObjectTransforms;
+	public RawImage[] m_curtains;
+	public Texture m_4by3Curtains;
+	public TextMeshProUGUI m_titleText;
 
 	private MenuState m_menuState = null;
 	private List<MenuState> m_menuStateStack = new List<MenuState>();
@@ -39,9 +45,32 @@ public class GameManager : MonoBehaviour {
 
 	void Start () {
 
+		if (Camera.main.aspect < 1.7) {
+
+			m_shiftableObjectTransforms [0].position = new Vector3 (-6.4f, -1.8f, 3.84f);
+			m_shiftableObjectTransforms [1].position = new Vector3 (-6.4f, 2.9f, 3.84f);
+
+			m_shiftableObjectTransforms [2].position = new Vector3 (-2.5f, 3.6f, 0.0f);
+			m_shiftableObjectTransforms [3].position = new Vector3 (-1.9f, -0.2f, 0.0f);
+
+			m_shiftableObjectTransforms [4].position = new Vector3 (5.7f, 3.8f, 0.0f);
+			m_shiftableObjectTransforms [5].position = new Vector3 (5.7f, -0.2f, 0.0f);
+
+			m_titleText.fontSize = 64.0f;
+
+			foreach (RawImage r in m_curtains) {
+
+				r.texture = m_4by3Curtains;
+			}
+		}
+
 		DOTween.Init ();
 
-		PushMenuState (MenuState.State.GameState);
+		if (!m_skipIntro) {
+			PushMenuState (MenuState.State.MainMenu);
+		} else {
+			PushMenuState (MenuState.State.GameState);
+		}
 	}
 		
 
@@ -49,7 +78,7 @@ public class GameManager : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		Debug.Log (MenuState_GameState.instance.m_playerInputAllowed);
+//		Debug.Log (MenuState_GameState.instance.m_playerInputAllowed);
 		if (m_menuState != null) {
 			m_menuState.OnUpdate ();
 		}
