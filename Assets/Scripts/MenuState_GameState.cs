@@ -218,7 +218,14 @@ public class MenuState_GameState : MenuState {
 			}
 		}
 
-
+//		if (Input.anyKeyDown) {
+//
+//			foreach (Hand h in m_hands) {
+//
+//				h.ThrowDart ();
+//
+//				}
+//		}
 
 		#else
 
@@ -390,6 +397,13 @@ public class MenuState_GameState : MenuState {
 		m_turnNumber++;
 		UpdateTimeLine ();
 		CharacterController.instance.UpdateFace ();
+
+		// remove any arrows on stat UI
+
+		foreach (Stat s in m_stats) {
+
+			s.ui.SetArrow (StatUI.ArrowType.None);
+		}
 
 		// remove darts
 
@@ -811,8 +825,10 @@ public class MenuState_GameState : MenuState {
 
 							if (amt > 0) {
 								AudioManager.instance.PlaySound (AudioManager.SoundType.Capitalism_Increase);
+								thisStat.ui.SetArrow (StatUI.ArrowType.Increase);
 							} else {
 								AudioManager.instance.PlaySound (AudioManager.SoundType.Capitalism_Decrease);
+								thisStat.ui.SetArrow (StatUI.ArrowType.Decrease);
 							}
 							break;
 
@@ -820,8 +836,10 @@ public class MenuState_GameState : MenuState {
 
 							if (amt > 0) {
 								AudioManager.instance.PlaySound (AudioManager.SoundType.Law_Increase);
+								thisStat.ui.SetArrow (StatUI.ArrowType.Increase);
 							} else {
 								AudioManager.instance.PlaySound (AudioManager.SoundType.Law_Decrease);
+								thisStat.ui.SetArrow (StatUI.ArrowType.Decrease);
 							}
 							break;
 
@@ -829,8 +847,10 @@ public class MenuState_GameState : MenuState {
 							
 							if (amt > 0) {
 								AudioManager.instance.PlaySound (AudioManager.SoundType.Democracy_Increase);
+								thisStat.ui.SetArrow (StatUI.ArrowType.Increase);
 							} else {
 								AudioManager.instance.PlaySound (AudioManager.SoundType.Democracy_Decrease);
+								thisStat.ui.SetArrow (StatUI.ArrowType.Decrease);
 							}
 							break;
 
@@ -838,8 +858,10 @@ public class MenuState_GameState : MenuState {
 
 							if (amt > 0) {
 								AudioManager.instance.PlaySound (AudioManager.SoundType.Culture_Increase);
+								thisStat.ui.SetArrow (StatUI.ArrowType.Increase);
 							} else {
 								AudioManager.instance.PlaySound (AudioManager.SoundType.Culture_Decrease);
+								thisStat.ui.SetArrow (StatUI.ArrowType.Decrease);
 							}
 							break;
 						}

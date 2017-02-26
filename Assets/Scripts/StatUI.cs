@@ -6,13 +6,24 @@ using DG.Tweening;
 
 public class StatUI : MonoBehaviour {
 
+	public enum ArrowType
+	{
+		None,
+		Increase,
+		Decrease,
+	}
+
 	public RectTransform m_progressBar_Fill;
 
 	public RawImage 
 	m_icon,
 	m_progressBar,
 	m_progressBar_BG,
-	m_iconBorder;
+	m_iconBorder,
+	m_arrowIcon;
+
+	public Texture[]
+	m_arrowIcons;
 
 	public TextMeshProUGUI m_statname;
 
@@ -48,6 +59,30 @@ public class StatUI : MonoBehaviour {
 
 		Color c = m_progressBar_BG.color;
 		m_progressBar_BG.color = new Color (newColor.r, newColor.g, newColor.b, c.a);
+	}
+
+	public void SetArrow (ArrowType a)
+	{
+		switch (a) {
+
+		case ArrowType.None:
+
+			m_arrowIcon.gameObject.SetActive (false);
+
+			break;
+		case ArrowType.Increase:
+
+			m_arrowIcon.gameObject.SetActive (true);
+			m_arrowIcon.texture = m_arrowIcons [1];
+
+			break;
+		case ArrowType.Decrease:
+
+			m_arrowIcon.gameObject.SetActive (true);
+			m_arrowIcon.texture = m_arrowIcons [0];
+
+			break;
+		}
 	}
 
 	public void MouseEnter ()
