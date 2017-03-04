@@ -22,7 +22,7 @@ public class Stat : ScriptableObject  {
 		m_ui = s;
 		s.m_stat = this;
 		s.m_statname.text = m_name.ToUpper();
-		UpdateValue (m_maxScore / 2);
+//		UpdateValue (m_maxScore / 2);
 		s.m_icon.texture = m_icon;
 
 	}

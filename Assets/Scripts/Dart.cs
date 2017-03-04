@@ -7,7 +7,8 @@ public class Dart : MonoBehaviour {
 
 	public Collider m_collider;
 
-	public Transform m_trail;
+	public Transform 
+		m_trail;
 
 	public Word.WordType m_dartType = Word.WordType.None;
 

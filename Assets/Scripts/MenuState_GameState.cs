@@ -72,6 +72,8 @@ public class MenuState_GameState : MenuState {
 
 	public String[] m_interjections;
 
+	public Transform[] m_clickReceivers;
+
 	private List<Stat> m_stats = new List<Stat>();
 	private List<TweetUI> m_tweets = new List<TweetUI>();
 	private List<TimelineUI> m_timelinePips = new List<TimelineUI>();
@@ -83,7 +85,9 @@ public class MenuState_GameState : MenuState {
 
 	public bool 
 	m_playerInputAllowed = false,
-	m_waitingForNextTurn = false;
+	m_waitingForNextTurn = false,
+	m_helpTapIconGameplayShown = false,
+	m_helpTapIconPhoneShown = false;
 
 	private PhoneState m_phoneState = PhoneState.Down;
 
@@ -143,6 +147,11 @@ public class MenuState_GameState : MenuState {
 
 		} else {
 
+			foreach (Stat s in m_stats) {
+
+				s.UpdateValue (s.maxScore / 2);
+			}
+
 			m_introPanel.gameObject.SetActive (false);
 //			m_titleText.gameObject.SetActive (true);
 
@@ -174,51 +183,51 @@ public class MenuState_GameState : MenuState {
 
 		#if UNITY_IOS
 
-		if (Input.touches.Length > 0)
-		{
-			if (Input.touches[0].phase == TouchPhase.Ended)
-			{
+//		if (Input.touches.Length > 0)
+//		{
+//			if (Input.touches[0].phase == TouchPhase.Ended)
+//			{
+//
+//				if (Input.mousePosition.y < 50 || m_phoneState == PhoneState.Up)
+//				{
+//					if (m_phoneState == PhoneState.Up && m_playerInputAllowed) {
+//
+//						TogglePhone ();
+//					}
+//				} else {
+//
+//					if (m_phoneState == PhoneState.Up && m_playerInputAllowed) {
+//
+//						TogglePhone ();
+//
+//					} else if (m_playerInputAllowed) {
+//
+//						foreach (Hand h in m_hands) {
+//
+//							h.ThrowDart ();
+//
+//						}
+//
+//						CharacterController.instance.DartsThrown ();
+//						AudioManager.instance.PlaySound (AudioManager.SoundType.Dart_Flight);
+//
+//						foreach (Dartboard d in m_dartboards) {
+//
+//							float flipChance = 0.1f;
+//
+//							if (!d.flipped && MenuState_GameState.instance.turnNumber > 3 && UnityEngine.Random.Range (0.0f, 1.0f) <= flipChance) {
+//
+//								d.ToggleTargetFlip ();
+//							}
+//						}
+//
+//						m_playerInputAllowed = false;
+//					}
+//				}
+//			}
+//		}
 
-				if (Input.mousePosition.y < 50 || m_phoneState == PhoneState.Up)
-				{
-					if (m_phoneState == PhoneState.Up && m_playerInputAllowed) {
-
-						TogglePhone ();
-					}
-				} else {
-
-					if (m_phoneState == PhoneState.Up && m_playerInputAllowed) {
-
-						TogglePhone ();
-
-					} else if (m_playerInputAllowed) {
-
-						foreach (Hand h in m_hands) {
-
-							h.ThrowDart ();
-
-						}
-
-						CharacterController.instance.DartsThrown ();
-						AudioManager.instance.PlaySound (AudioManager.SoundType.Dart_Flight);
-
-						foreach (Dartboard d in m_dartboards) {
-
-							float flipChance = 0.1f;
-
-							if (!d.flipped && MenuState_GameState.instance.turnNumber > 3 && UnityEngine.Random.Range (0.0f, 1.0f) <= flipChance) {
-
-								d.ToggleTargetFlip ();
-							}
-						}
-
-						m_playerInputAllowed = false;
-					}
-				}
-			}
-		}
-
-//		if (Input.anyKeyDown) {
+//		if (Input.anyKeyDown && m_playerInputAllowed) {
 //
 //			foreach (Hand h in m_hands) {
 //
@@ -233,83 +242,85 @@ public class MenuState_GameState : MenuState {
 
 			PauseButtonPressed();
 
-		} else if (Input.GetMouseButtonDown (0) && (Input.mousePosition.y < 50 || Input.mousePosition.y > Screen.height - 50 || m_phoneState == PhoneState.Up)) {
-
-			if (m_phoneState == PhoneState.Up && m_playerInputAllowed) {
-
-				TogglePhone ();
-			}
-		}
-		else if (Input.anyKeyDown) {
-			
-			if (m_phoneState == PhoneState.Up && m_playerInputAllowed) {
-
-				TogglePhone ();
-
-			} else if (m_playerInputAllowed) {
-				
-				foreach (Hand h in m_hands) {
-
-					h.ThrowDart ();
-
-				}
-
-				CharacterController.instance.DartsThrown ();
-				AudioManager.instance.PlaySound (AudioManager.SoundType.Dart_Flight);
-
-				foreach (Dartboard d in m_dartboards) {
-
-					float flipChance = 0.1f;
-
-					if (!d.flipped && MenuState_GameState.instance.turnNumber > 3 && UnityEngine.Random.Range (0.0f, 1.0f) <= flipChance) {
-
-						d.ToggleTargetFlip ();
-					}
-				}
-
-				m_playerInputAllowed = false;
-			}
 		} 
+//		else if (Input.GetMouseButtonDown (0) && (Input.mousePosition.y < 50 || Input.mousePosition.y > Screen.height - 50 || m_phoneState == PhoneState.Up)) {
+//
+//			if (m_phoneState == PhoneState.Up && m_playerInputAllowed) {
+//
+//				TogglePhone ();
+//			}
+//		}
+//		else if (Input.anyKeyDown) {
+//			
+//			if (m_phoneState == PhoneState.Up && m_playerInputAllowed) {
+//
+//				TogglePhone ();
+//
+//			} else if (m_playerInputAllowed) {
+//				
+//				foreach (Hand h in m_hands) {
+//
+//					h.ThrowDart ();
+//
+//				}
+//
+//				CharacterController.instance.DartsThrown ();
+//				AudioManager.instance.PlaySound (AudioManager.SoundType.Dart_Flight);
+//
+//				foreach (Dartboard d in m_dartboards) {
+//
+//					float flipChance = 0.1f;
+//
+//					if (!d.flipped && MenuState_GameState.instance.turnNumber > 3 && UnityEngine.Random.Range (0.0f, 1.0f) <= flipChance) {
+//
+//						d.ToggleTargetFlip ();
+//					}
+//				}
+//
+//				m_playerInputAllowed = false;
+//			}
+//		} 
 		#endif
 	}
 
 	private void UpdateTimeLine ()
 	{
-		while (m_timelinePips.Count > 0) {
+//		while (m_timelinePips.Count > 0) {
+//
+//			GameObject g = m_timelinePips [0].gameObject;
+//			m_timelinePips.RemoveAt (0);
+//			Destroy (g);
+//
+//		}
 
-			GameObject g = m_timelinePips [0].gameObject;
-			m_timelinePips.RemoveAt (0);
-			Destroy (g);
+//		for (int i = 0; i < m_maxTurns; i++) {
+//
+//			GameObject uiOBJ = (GameObject) Instantiate(m_timelineOBJ, m_timelinePanel);
+//			uiOBJ.transform.localScale = Vector3.one;
+//			TimelineUI tUI = (TimelineUI)uiOBJ.GetComponent<TimelineUI> ();
+//			m_timelinePips.Add (tUI);
+//
+//			if (i == m_turnNumber) {
+//
+//				tUI.SetState (TimelineUI.State.Present);
+//			} else if (i < m_turnNumber) {
+//
+//				if ( i > 0 && i % 12 == 0) {
+//					tUI.SetState (TimelineUI.State.Past_YearMark);
+//				} else {
+//					tUI.SetState (TimelineUI.State.Past);
+//				}
+//			} else {
+//				if (i % 12 == 0) {
+//					tUI.SetState (TimelineUI.State.Future_YearMark);
+//				} else {
+//					tUI.SetState (TimelineUI.State.Future);
+//				}
+//			}
+//		}
 
-		}
-
-		for (int i = 0; i < m_maxTurns; i++) {
-
-			GameObject uiOBJ = (GameObject) Instantiate(m_timelineOBJ, m_timelinePanel);
-			uiOBJ.transform.localScale = Vector3.one;
-			TimelineUI tUI = (TimelineUI)uiOBJ.GetComponent<TimelineUI> ();
-			m_timelinePips.Add (tUI);
-
-			if (i == m_turnNumber) {
-
-				tUI.SetState (TimelineUI.State.Present);
-			} else if (i < m_turnNumber) {
-
-				if ( i > 0 && i % 12 == 0) {
-					tUI.SetState (TimelineUI.State.Past_YearMark);
-				} else {
-					tUI.SetState (TimelineUI.State.Past);
-				}
-			} else {
-				if (i % 12 == 0) {
-					tUI.SetState (TimelineUI.State.Future_YearMark);
-				} else {
-					tUI.SetState (TimelineUI.State.Future);
-				}
-			}
-		}
-
-		m_dateText.text = GetDate (m_turnNumber).ToUpper();
+		string dateString = GetDate (m_turnNumber).ToUpper () + "\n<size=18>" + GetTimeRemaining(m_turnNumber) + "</size>";
+		m_dateText.text = dateString;
 	}
 
 
@@ -522,6 +533,16 @@ public class MenuState_GameState : MenuState {
 		Response r = v.m_responseBank[UnityEngine.Random.Range(0, v.m_responseBank.Length)];
 		String s = "";
 
+		string nounColor = "#060A67FF";
+		string verbColor = "#3A0D0DFF";
+
+		#if UNITY_IOS
+
+		nounColor = "#0C13B0FF";
+		verbColor = "#8C2121FF";
+
+		#endif
+
 		// populate response fragments
 
 		foreach (Response.ResponseFragment rf in r.m_fragments) {
@@ -533,44 +554,47 @@ public class MenuState_GameState : MenuState {
 				s += rf.m_string;
 				break;
 			case Response.FragmentType.Noun:
+				
 				if (UnityEngine.Random.Range (0.0f, 1.0f) <= 0.4f) {
-					s += "<color=#060A67FF>" + n.m_targetName.ToUpper () + "</color>";
+
+					s += "<color=" + nounColor + ">" + n.m_targetName.ToUpper () + "</color>";
+
 				} else {
 
 					if (n.m_proper)
 					{
-						s += "<color=#060A67FF>" + n.m_targetName + "</color>";
+						s += "<color=" + nounColor + ">" + n.m_targetName + "</color>";
 					} else {
-						s += "<color=#060A67FF>" + n.m_targetName.ToLower () + "</color>";
+						s += "<color=" + nounColor + ">" + n.m_targetName.ToLower () + "</color>";
 					}
 				}
 				break;
 			case Response.FragmentType.Noun_Capitolized:
 				if (UnityEngine.Random.Range (0.0f, 1.0f) <= 0.4f) {
-					s += "<color=#060A67FF>" + n.m_targetName.ToUpper () + "</color>";
+					s += "<color=" + nounColor + ">" + n.m_targetName.ToUpper () + "</color>";
 				} else {
 					
 					string st = n.m_targetName;
 					st = char.ToUpper(st[0]) + st.Substring(1);
-					s += "<color=#060A67FF>" + st + "</color>";
+					s += "<color=" + nounColor + ">" + st + "</color>";
 				}
 				break;
 			case Response.FragmentType.Verb_Capitolized:
 				if (UnityEngine.Random.Range (0.0f, 1.0f) <= 0.4f) {
-					s += "<color=#3A0D0DFF>" + rf.m_string.ToUpper () + "</color>";
+					s += "<color=" + verbColor + ">" + rf.m_string.ToUpper () + "</color>";
 				} else {
 
 					string st = rf.m_string;
 					st = char.ToUpper(st[0]) + st.Substring(1);
-					s += "<color=#3A0D0DFF>" + st + "</color>";
+					s += "<color=" + verbColor + ">" + st + "</color>";
 
 				}
 				break;
 			case Response.FragmentType.Verb:
 				if (UnityEngine.Random.Range (0.0f, 1.0f) <= 0.4f) {
-					s += "<color=#3A0D0DFF>" + rf.m_string.ToUpper () + "</color>";
+					s += "<color=" + verbColor + ">" + rf.m_string.ToUpper () + "</color>";
 				} else {
-					s += "<color=#3A0D0DFF>" + rf.m_string.ToLower () + "</color>";
+					s += "<color=" + verbColor + ">" + rf.m_string.ToLower () + "</color>";
 				}
 				break;
 			case Response.FragmentType.Question:
@@ -656,6 +680,21 @@ public class MenuState_GameState : MenuState {
 		return s;
 	}
 
+	public string GetTimeRemaining (int turnNumber)
+	{
+		int turn = m_maxTurns;
+		int years = 0;
+		Debug.Log (turnNumber);
+		while (turn > turnNumber) {
+
+			turn -= 12;
+			years++;
+		}
+
+		String s = years.ToString() + " Years and " + turn.ToString() +  " Months Remain";
+		return s;
+	}
+
 	private IEnumerator NextRoundTimer ()
 	{
 
@@ -685,6 +724,9 @@ public class MenuState_GameState : MenuState {
 		AudioManager.instance.PlaySound (AudioManager.SoundType.Phone_Raise);
 
 		yield return new WaitForSeconds (1.0f);
+
+//		m_clickReceivers [1].gameObject.SetActive (true);
+//		m_clickReceivers [0].gameObject.SetActive (false);
 
 		m_currentTweet.m_id = GameManager.instance.newID;
 
@@ -976,8 +1018,7 @@ public class MenuState_GameState : MenuState {
 		m_outro.Play ();
 
 	}
-
-
+		
 	public void PhoneButtonPressed ()
 	{
 		AudioManager.instance.PlaySound (AudioManager.SoundType.Button_Click);
@@ -990,12 +1031,15 @@ public class MenuState_GameState : MenuState {
 		if (m_phoneState == PhoneState.Down) {
 
 			m_phoneState = PhoneState.Up;
-			m_playerInputAllowed = false;
+//			m_playerInputAllowed = false;
 
 			m_phone.clip = m_phone.GetClip ("Phone_Raise01");
 			m_phone.Play ();
 
 			AudioManager.instance.PlaySound (AudioManager.SoundType.Phone_Raise);
+
+//			m_clickReceivers [1].gameObject.SetActive (true);
+//			m_clickReceivers [0].gameObject.SetActive (false);
 
 		} else if (m_phoneState == PhoneState.Up) {
 
@@ -1007,7 +1051,7 @@ public class MenuState_GameState : MenuState {
 					return;
 
 				} else {
-
+					
 					m_waitingForNextTurn = false;
 					EndRound ();
 
@@ -1022,6 +1066,9 @@ public class MenuState_GameState : MenuState {
 			}
 			m_phone.clip = m_phone.GetClip ("Phone_Lower01");
 			m_phone.Play ();
+
+//			m_clickReceivers [0].gameObject.SetActive (true);
+//			m_clickReceivers [1].gameObject.SetActive (false);
 
 			AudioManager.instance.PlaySound (AudioManager.SoundType.Phone_Raise);
 
@@ -1135,12 +1182,48 @@ public class MenuState_GameState : MenuState {
 
 		m_intro.Play ();
 
+		AudioManager.instance.PlaySound (AudioManager.SoundType.Curtain_Raise);
+
+		yield return new WaitForSeconds (0.5f);
+
+		m_stats[0].UpdateValue (m_stats[0].maxScore);
+//		m_stats [0].ui.ShowName (true);
+
+		yield return new WaitForSeconds (0.5f);
+
+		m_stats[1].UpdateValue (m_stats[1].maxScore);
+//		m_stats [1].ui.ShowName (true);
+		m_stats[0].UpdateValue ((m_stats[0].maxScore / 2) * -1);
+
+		yield return new WaitForSeconds (0.5f);
+
+		m_stats[2].UpdateValue (m_stats[2].maxScore);
+//		m_stats [2].ui.ShowName (true);
+		m_stats[1].UpdateValue ((m_stats[1].maxScore / 2) * -1);
+
+		yield return new WaitForSeconds (0.5f);
+
+		m_stats[3].UpdateValue (m_stats[3].maxScore);
+//		m_stats [3].ui.ShowName (true);
+		m_stats[2].UpdateValue ((m_stats[2].maxScore / 2) * -1);
+
+		yield return new WaitForSeconds (0.5f);
+
+		m_stats[3].UpdateValue ((m_stats[3].maxScore / 2) * -1);
+
+
+
 
 //		yield return new WaitForSeconds (2.5f);
 
-		AudioManager.instance.PlaySound (AudioManager.SoundType.Curtain_Raise);
+//		m_stats [0].ui.ShowName (false);
+//		m_stats [1].ui.ShowName (false);
+//		m_stats [2].ui.ShowName (false);
+//		m_stats [3].ui.ShowName (false);
 
-		yield return new WaitForSeconds (2.5f);
+
+
+//		yield return new WaitForSeconds (2.5f);
 
 		m_introPanel.gameObject.SetActive (false);
 //		m_titleText.gameObject.SetActive (true);
@@ -1247,6 +1330,38 @@ public class MenuState_GameState : MenuState {
 //			log += "\n    TokenSecret : " + m_AccessTokenResponse.TokenSecret;
 //			print(log);
 //		}
+	}
+
+	public void Click ()
+	{
+		Debug.Log (m_phoneState);
+		if (m_phoneState == PhoneState.Up && m_playerInputAllowed) {
+
+			TogglePhone ();
+
+		} else if (m_playerInputAllowed) {
+
+			foreach (Hand h in m_hands) {
+
+				h.ThrowDart ();
+
+			}
+
+			CharacterController.instance.DartsThrown ();
+			AudioManager.instance.PlaySound (AudioManager.SoundType.Dart_Flight);
+
+			foreach (Dartboard d in m_dartboards) {
+
+				float flipChance = 0.1f;
+
+				if (!d.flipped && MenuState_GameState.instance.turnNumber > 3 && UnityEngine.Random.Range (0.0f, 1.0f) <= flipChance) {
+
+					d.ToggleTargetFlip ();
+				}
+			}
+
+			m_playerInputAllowed = false;
+		}
 	}
 
 	public void PlayAgain ()

@@ -85,13 +85,22 @@ public class StatUI : MonoBehaviour {
 		}
 	}
 
+	public void ShowName (bool doShowName)
+	{
+		if (doShowName) {
+			m_statname.gameObject.SetActive (true);
+		} else {
+			m_statname.gameObject.SetActive (false);
+		}
+	}
+
 	public void MouseEnter ()
 	{
-		m_statname.gameObject.SetActive (true);
+//		m_statname.gameObject.SetActive (true);
 	}
 
 	public void MouseExit ()
 	{
-		m_statname.gameObject.SetActive (false);
+//		m_statname.gameObject.SetActive (false);
 	}
 }
