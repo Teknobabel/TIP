@@ -11,7 +11,11 @@ public class GameManager : MonoBehaviour {
 
 	// Debug 
 
-	public bool m_skipIntro = false;
+	public bool 
+	m_skipIntro = false,
+	m_demoMode = true,
+	m_resetPlayerPrefs = false;
+
 
 	// Bank of scriptableobjects for game to pull from each round
 
@@ -40,6 +44,33 @@ public class GameManager : MonoBehaviour {
 			instance = this;
 		} else {
 			Destroy(gameObject);
+		}
+
+		if (!m_demoMode) {
+
+			if (m_resetPlayerPrefs) {
+
+				PlayerPrefs.DeleteAll ();
+			}
+
+			// initialize player prefs entries if not present
+
+			bool savePrefs = false;
+
+			if (!PlayerPrefs.HasKey ("Help_Gameplay")) {
+				PlayerPrefs.SetInt ("Help_Gameplay", 0);
+				savePrefs = true;
+			}
+
+			if (!PlayerPrefs.HasKey ("Help_Phone")) {
+				PlayerPrefs.SetInt ("Help_Phone", 0);
+				savePrefs = true;
+			}
+
+			if (savePrefs) {
+
+				PlayerPrefs.Save ();
+			}
 		}
 	}
 

@@ -64,7 +64,8 @@ public class MenuState_GameState : MenuState {
 	public Animation
 	m_phone,
 	m_intro,
-	m_outro;
+	m_outro,
+	m_tapIcon;
 
 	public TweetUI m_tweetHeader;
 
@@ -85,7 +86,9 @@ public class MenuState_GameState : MenuState {
 
 	public bool 
 	m_playerInputAllowed = false,
-	m_waitingForNextTurn = false,
+	m_waitingForNextTurn = false;
+
+	private bool
 	m_helpTapIconGameplayShown = false,
 	m_helpTapIconPhoneShown = false;
 
@@ -118,6 +121,25 @@ public class MenuState_GameState : MenuState {
 
 	public override void OnActivate()
 	{
+		if (!GameManager.instance.m_demoMode) {
+
+			// initialize player prefs related variables
+
+			int help_Gameplay = PlayerPrefs.GetInt ("Help_Gameplay");
+			int help_Phone = PlayerPrefs.GetInt ("Help_Phone");
+
+			if (help_Gameplay == 1) {
+
+				m_helpTapIconGameplayShown = true;
+			}
+
+			if (help_Phone == 1) {
+
+				m_helpTapIconPhoneShown = true;
+			}
+		}
+
+
 		// initialize stats
 
 		foreach (Stat thisStat in m_statBank) {
@@ -682,16 +704,30 @@ public class MenuState_GameState : MenuState {
 
 	public string GetTimeRemaining (int turnNumber)
 	{
-		int turn = m_maxTurns;
+		int turn = turnNumber;
 		int years = 0;
-		Debug.Log (turnNumber);
-		while (turn > turnNumber) {
+		int months = 0;
+//		Debug.Log (turn);
+//		while (turn > turnNumber) {
+//
+//			turn -= 12;
+//			years++;
+////			Debug.Log (turn);
+//		}
 
-			turn -= 12;
-			years++;
+		while (turn < m_maxTurns) {
+
+			turn++;
+			months++;
+
+			if (months == 11) {
+				months = 0;
+				years++;
+			}
+			//			Debug.Log (turn);
 		}
 
-		String s = years.ToString() + " Years and " + turn.ToString() +  " Months Remain";
+		String s = years.ToString() + " Years and " + months.ToString() +  " Months Remain";
 		return s;
 	}
 
@@ -787,8 +823,8 @@ public class MenuState_GameState : MenuState {
 			}
 		}
 
-		int incAmount = 15;
-//		int incAmount = 100;
+//		int incAmount = 15;
+		int incAmount = 20;
 		int amt = 0;
 
 
@@ -973,6 +1009,12 @@ public class MenuState_GameState : MenuState {
 
 		m_playerInputAllowed = true;
 		m_waitingForNextTurn = true;
+
+
+		if (!m_helpTapIconPhoneShown) {
+			m_tapIcon.gameObject.SetActive (true);
+			m_tapIcon.Play ("Help_TapIcon01");
+		}
 
 
 		yield return true;
@@ -1229,6 +1271,11 @@ public class MenuState_GameState : MenuState {
 //		m_titleText.gameObject.SetActive (true);
 
 		m_playerInputAllowed = true;
+
+		if (!m_helpTapIconGameplayShown) {
+			m_tapIcon.gameObject.SetActive (true);
+			m_tapIcon.Play ("Help_TapIcon02");
+		}
 		
 		yield return true;
 	}
@@ -1334,12 +1381,40 @@ public class MenuState_GameState : MenuState {
 
 	public void Click ()
 	{
-		Debug.Log (m_phoneState);
+
 		if (m_phoneState == PhoneState.Up && m_playerInputAllowed) {
+
+			if (!m_helpTapIconPhoneShown) {
+
+				m_tapIcon.gameObject.SetActive (false);
+				m_helpTapIconPhoneShown = true;
+
+				if (!GameManager.instance.m_demoMode) {
+
+					// save first time help shown to player prefs
+
+					PlayerPrefs.SetInt("Help_Phone", 1);
+					PlayerPrefs.Save ();
+				}
+			}
 
 			TogglePhone ();
 
 		} else if (m_playerInputAllowed) {
+
+			if (!m_helpTapIconGameplayShown) {
+
+				m_tapIcon.gameObject.SetActive (false);
+				m_helpTapIconGameplayShown = true;
+
+				if (!GameManager.instance.m_demoMode) {
+
+					// save first time help shown to player prefs
+
+					PlayerPrefs.SetInt("Help_Gameplay", 1);
+					PlayerPrefs.Save ();
+				}
+			}
 
 			foreach (Hand h in m_hands) {
 

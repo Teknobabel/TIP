@@ -10,6 +10,7 @@ public abstract class MenuState : MonoBehaviour {
 		Pause,
 		GameOver,
 		GameState,
+		Pause_MacPC,
 	}
 
 	public State m_state = State.None;

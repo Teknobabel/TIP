@@ -31,13 +31,14 @@ public class StatUI : MonoBehaviour {
 
 	public void UpdateStatValue (int newValue, bool doAnimate)
 	{
+		
 		Rect r = m_progressBar_Fill.rect;
 		r.height = newValue;
 
 		float maxHeight = m_progressBar_BG.rectTransform.rect.size.y;
 		float modifier = ((float)m_stat.currentScore) / ((float)m_stat.maxScore);
 		float newHeight = maxHeight * modifier;
-
+//		Debug.Log (newValue);
 		if (doAnimate) {
 			DOTween.To (() => m_progressBar_Fill.sizeDelta, x => m_progressBar_Fill.sizeDelta = x, new Vector2 (m_progressBar_Fill.sizeDelta.x, newHeight), 1);
 		} else {

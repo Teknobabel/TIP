@@ -91,8 +91,8 @@ public class Hand : MonoBehaviour {
 	{
 		// apply a small random offset
 
-		float minOffset = -5;
-		float maxOffset = 5;
+		float minOffset = -4;
+		float maxOffset = 4;
 
 		Vector3 offsetDir = new Vector3(m_startDir.x, m_startDir.y, m_startDir.z);
 		offsetDir.y += UnityEngine.Random.Range (minOffset, maxOffset);

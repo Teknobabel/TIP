@@ -4,7 +4,8 @@ using System.Collections;
 public class MenuState_MainMenu : MenuState {
 
 	public Transform
-	m_introPanel;
+	m_introPanel,
+	m_tapIcon;
 
 	public Animation
 		m_intro;
@@ -55,6 +56,7 @@ public class MenuState_MainMenu : MenuState {
 		}
 		if (Input.anyKeyDown) {
 
+			m_tapIcon.gameObject.SetActive (false);
 			GameManager.instance.PushMenuState (MenuState.State.GameState);
 		}
 	}
