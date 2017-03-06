@@ -67,6 +67,16 @@ public class GameManager : MonoBehaviour {
 				savePrefs = true;
 			}
 
+			if (!PlayerPrefs.HasKey ("FullscreenState")) {
+				PlayerPrefs.SetInt ("FullscreenState", 0);
+				savePrefs = true;
+			}
+
+			if (!PlayerPrefs.HasKey ("ResolutionState")) {
+				PlayerPrefs.SetInt ("ResolutionState", 0);
+				savePrefs = true;
+			}
+
 			if (savePrefs) {
 
 				PlayerPrefs.Save ();
@@ -104,7 +114,28 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 		
+	public void SetFullscreenState (bool fullScreenTrue, bool saveState)
+	{
+		if (fullScreenTrue) {
+			Screen.fullScreen = Screen.fullScreen;
 
+			if (saveState) {
+				PlayerPrefs.SetInt ("FullscreenState", 0);
+				PlayerPrefs.Save ();
+			}
+		} else {
+			Screen.fullScreen = !Screen.fullScreen;
+			if (saveState) {
+				PlayerPrefs.SetInt ("FullscreenState", 1);
+				PlayerPrefs.Save ();
+			}
+		}
+	}
+
+	public void SetResolutionState (int w, int h, bool doSave)
+	{
+		Screen.SetResolution(w, h, Screen.fullScreen);
+	}
 
 
 	// Update is called once per frame

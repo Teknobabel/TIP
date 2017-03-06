@@ -71,4 +71,18 @@ public class MenuState_Pause_MacPC : MenuState {
 		AudioManager.instance.PlaySound (AudioManager.SoundType.Button_Click);
 		Application.OpenURL ("https://action.aclu.org/secure/donate-to-aclu");
 	}
+
+	public void FullscreenButtonPressed () {
+
+		int fullscreenState = PlayerPrefs.GetInt ("FullscreenState");
+
+		if (fullscreenState == 0) {
+
+			GameManager.instance.SetFullscreenState (false, true);
+
+		} else if (fullscreenState == 1) {
+
+			GameManager.instance.SetFullscreenState (true, true);
+		}
+	}
 }

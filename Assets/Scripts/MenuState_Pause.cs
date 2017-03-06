@@ -71,4 +71,6 @@ public class MenuState_Pause : MenuState {
 		AudioManager.instance.PlaySound (AudioManager.SoundType.Button_Click);
 		Application.OpenURL ("https://action.aclu.org/secure/donate-to-aclu");
 	}
+
+
 }

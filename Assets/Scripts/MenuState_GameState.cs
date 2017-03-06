@@ -1466,7 +1466,12 @@ public class MenuState_GameState : MenuState {
 	public void PauseButtonPressed ()
 	{
 		if (m_gameState != GameState.GameOver) {
-			GameManager.instance.PushMenuState (State.Pause);
+
+			#if UNITY_IOS
+			GameManager.instance.PushMenuState (State.Pause_MacPC);
+			#else
+			GameManager.instance.PushMenuState (State.Pause_MacPC);
+			#endif
 		}
 	}
 

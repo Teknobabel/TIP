@@ -21,10 +21,10 @@ public class MenuState_MainMenu : MenuState {
 	{
 		m_introPanel.gameObject.SetActive (true);
 
-		if (!Application.isShowingSplashScreen) {
+//		if (!Application.isShowingSplashScreen) {
 			m_introPlayed = true;
 			StartCoroutine (PlayIntro ());
-		}
+//		}
 	}
 
 	public override void OnHold()
@@ -49,11 +49,11 @@ public class MenuState_MainMenu : MenuState {
 
 	public override void OnUpdate()
 	{
-		if (!m_introPlayed && !Application.isShowingSplashScreen) {
-
-			m_introPlayed = true;
-			StartCoroutine (PlayIntro ());
-		}
+//		if (!m_introPlayed && !Application.isShowingSplashScreen) {
+//
+//			m_introPlayed = true;
+//			StartCoroutine (PlayIntro ());
+//		}
 		if (Input.anyKeyDown) {
 
 			m_tapIcon.gameObject.SetActive (false);
