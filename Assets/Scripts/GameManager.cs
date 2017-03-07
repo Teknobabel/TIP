@@ -27,6 +27,7 @@ public class GameManager : MonoBehaviour {
 	public Transform[] m_shiftableObjectTransforms;
 	public RawImage[] m_curtains;
 	public Texture m_4by3Curtains;
+	public Texture m_16by9Curtains;
 	public TextMeshProUGUI m_titleText;
 
 	private MenuState m_menuState = null;
@@ -46,12 +47,14 @@ public class GameManager : MonoBehaviour {
 			Destroy(gameObject);
 		}
 
+		if (m_resetPlayerPrefs) {
+
+			PlayerPrefs.DeleteAll ();
+		}
+
 		if (!m_demoMode) {
 
-			if (m_resetPlayerPrefs) {
 
-				PlayerPrefs.DeleteAll ();
-			}
 
 			// initialize player prefs entries if not present
 
@@ -67,13 +70,28 @@ public class GameManager : MonoBehaviour {
 				savePrefs = true;
 			}
 
-			if (!PlayerPrefs.HasKey ("FullscreenState")) {
-				PlayerPrefs.SetInt ("FullscreenState", 0);
+//			if (!PlayerPrefs.HasKey ("FullscreenState")) {
+//				PlayerPrefs.SetInt ("FullscreenState", 0);
+//				savePrefs = true;
+//			}
+//
+//			if (!PlayerPrefs.HasKey ("ResolutionState_Width")) {
+//				PlayerPrefs.SetInt ("ResolutionState_Width", Screen.width);
+//				savePrefs = true;
+//			}
+//
+//			if (!PlayerPrefs.HasKey ("ResolutionState_Height")) {
+//				PlayerPrefs.SetInt ("ResolutionState_Height", Screen.height);
+//				savePrefs = true;
+//			}
+
+			if (!PlayerPrefs.HasKey ("MusicVolume")) {
+				PlayerPrefs.SetFloat ("MusicVolume", 0.5f);
 				savePrefs = true;
 			}
 
-			if (!PlayerPrefs.HasKey ("ResolutionState")) {
-				PlayerPrefs.SetInt ("ResolutionState", 0);
+			if (!PlayerPrefs.HasKey ("SFXVolume")) {
+				PlayerPrefs.SetFloat ("SFXVolume", 0.5f);
 				savePrefs = true;
 			}
 
@@ -81,12 +99,48 @@ public class GameManager : MonoBehaviour {
 
 				PlayerPrefs.Save ();
 			}
+
+
 		}
 	}
 
 	void Start () {
 
-		if (Camera.main.aspect < 1.7) {
+//		#if !UNITY_IOS
+//		int w = PlayerPrefs.GetInt ("ResolutionState_Width");
+//		int h = PlayerPrefs.GetInt ("ResolutionState_Height");
+//		int f = PlayerPrefs.GetInt ("FullscreenState");
+//
+//		bool fullscreen = true;
+//
+//		if (f == 1) {
+//			fullscreen = false;
+//		}
+//
+//		if (w != Screen.width || h != Screen.height) {
+//			Screen.SetResolution (w, h, fullscreen);
+//		}
+//
+//		Debug.Log(w.ToString() + " x " + h.ToString() + " / " + f.ToString());
+//		#endif
+
+		DOTween.Init ();
+
+		if (!m_skipIntro) {
+			PushMenuState (MenuState.State.MainMenu);
+		} else {
+			PushMenuState (MenuState.State.GameState);
+		}
+	}
+
+	public void UpdatedPositionByResolution ()
+	{
+		float w = Screen.width;
+		float h = Screen.height;
+		Debug.Log (w / h);
+		if (w / h < 1.5f) {
+
+			// move to 4x3 positions
 
 			m_shiftableObjectTransforms [0].position = new Vector3 (-6.4f, -1.8f, 3.84f);
 			m_shiftableObjectTransforms [1].position = new Vector3 (-6.4f, 2.9f, 3.84f);
@@ -103,39 +157,49 @@ public class GameManager : MonoBehaviour {
 
 				r.texture = m_4by3Curtains;
 			}
-		}
 
-		DOTween.Init ();
-
-		if (!m_skipIntro) {
-			PushMenuState (MenuState.State.MainMenu);
 		} else {
-			PushMenuState (MenuState.State.GameState);
+
+			// move to 16x9 positions
+
+			m_shiftableObjectTransforms [0].position = new Vector3 (-8.39f, -1.8f, 3.84f);
+			m_shiftableObjectTransforms [1].position = new Vector3 (-8.36f, 2.9f, 3.84f);
+
+			m_shiftableObjectTransforms [2].position = new Vector3 (-1.51f, 3.21f, 0.0f);
+			m_shiftableObjectTransforms [3].position = new Vector3 (-0.97f, -0.74f, 0.0f);
+
+			m_shiftableObjectTransforms [4].position = new Vector3 (7.19f, 3.8f, 0.0f);
+			m_shiftableObjectTransforms [5].position = new Vector3 (7.19f, -0.2f, 0.0f);
+
+			m_titleText.fontSize = 76.0f;
+
+			foreach (RawImage r in m_curtains) {
+
+				r.texture = m_16by9Curtains ;
+			}
 		}
 	}
 		
-	public void SetFullscreenState (bool fullScreenTrue, bool saveState)
-	{
-		if (fullScreenTrue) {
-			Screen.fullScreen = Screen.fullScreen;
+//	public void SetFullscreenState (bool fullScreenTrue)
+//	{
+//		if (fullScreenTrue) {
+//			Screen.fullScreen = Screen.fullScreen;
+//
+////			if (!GameManager.instance.m_demoMode) {
+////				PlayerPrefs.SetInt ("FullscreenState", 0);
+////			}
+//		} else {
+//			Screen.fullScreen = !Screen.fullScreen;
+////			if (!GameManager.instance.m_demoMode) {
+////				PlayerPrefs.SetInt ("FullscreenState", 1);
+////			}
+//		}
+//	}
 
-			if (saveState) {
-				PlayerPrefs.SetInt ("FullscreenState", 0);
-				PlayerPrefs.Save ();
-			}
-		} else {
-			Screen.fullScreen = !Screen.fullScreen;
-			if (saveState) {
-				PlayerPrefs.SetInt ("FullscreenState", 1);
-				PlayerPrefs.Save ();
-			}
-		}
-	}
-
-	public void SetResolutionState (int w, int h, bool doSave)
-	{
-		Screen.SetResolution(w, h, Screen.fullScreen);
-	}
+//	public void SetResolutionState (int w, int h, bool doSave)
+//	{
+//		Screen.SetResolution(w, h, Screen.fullScreen);
+//	}
 
 
 	// Update is called once per frame
@@ -192,6 +256,15 @@ public class GameManager : MonoBehaviour {
 			}
 		}
 	}
+
+//	void OnApplicationQuit () {
+//
+//		#if !UNITY_EDITOR
+//		PlayerPrefs.SetInt("Screenmanager Resolution Width", Screen.width);
+//		PlayerPrefs.SetInt("Screenmanager Resolution Height", Screen.height);
+//		PlayerPrefs.SetInt("Screenmanager Is Fullscreen mode", 0);
+//		#endif
+//	}
 
 	public int newID {get{ m_newID++; return m_newID; }}
 	public string versionNumber {get{ return m_versionNumber; }}

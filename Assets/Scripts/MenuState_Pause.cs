@@ -1,12 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
 using TMPro;
+using UnityEngine.UI;
 
 public class MenuState_Pause : MenuState {
 
 	public Transform m_pauseMenu;
 
 	public TextMeshProUGUI m_versionNumber;
+
+	public Slider m_musicVolumeSlider;
+	public Slider m_sfxVolumeSlider;
 
 	private bool m_inputState = false;
 
@@ -20,6 +24,11 @@ public class MenuState_Pause : MenuState {
 		m_pauseMenu.gameObject.SetActive (true);
 
 		m_versionNumber.text = GameManager.instance.versionNumber;
+
+		// set volume slider values
+
+		m_musicVolumeSlider.value = AudioManager.instance.musicVolume;
+		m_sfxVolumeSlider.value = AudioManager.instance.sfxVolume;
 	}
 
 	public override void OnHold()
@@ -44,6 +53,26 @@ public class MenuState_Pause : MenuState {
 		}
 
 		Time.timeScale = 1.0f;
+
+		if (!GameManager.instance.m_demoMode) {
+
+			PlayerPrefs.SetFloat ("MusicVolume", AudioManager.instance.musicVolume);
+			PlayerPrefs.SetFloat ("SFXVolume", AudioManager.instance.sfxVolume);
+
+			if (Screen.fullScreen) {
+
+				PlayerPrefs.SetInt ("FullscreenState", 0);
+
+			} else {
+
+				PlayerPrefs.SetInt ("FullscreenState", 1);
+			}
+
+			PlayerPrefs.SetInt ("ResolutionState_Width", Screen.width);
+			PlayerPrefs.SetInt ("ResolutionState_Height", Screen.height);
+
+			PlayerPrefs.Save ();
+		}
 	}
 
 	public override void OnUpdate()

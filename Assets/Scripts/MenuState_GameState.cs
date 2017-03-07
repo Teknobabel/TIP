@@ -121,6 +121,8 @@ public class MenuState_GameState : MenuState {
 
 	public override void OnActivate()
 	{
+		GameManager.instance.UpdatedPositionByResolution ();
+
 		if (!GameManager.instance.m_demoMode) {
 
 			// initialize player prefs related variables
@@ -192,6 +194,8 @@ public class MenuState_GameState : MenuState {
 
 	public override void OnReturn()
 	{
+		GameManager.instance.UpdatedPositionByResolution ();
+
 		m_gameUI.gameObject.SetActive (true);
 	}
 
@@ -704,30 +708,49 @@ public class MenuState_GameState : MenuState {
 
 	public string GetTimeRemaining (int turnNumber)
 	{
-		int turn = turnNumber;
+		int turns = m_maxTurns - turnNumber;
 		int years = 0;
 		int months = 0;
-//		Debug.Log (turn);
-//		while (turn > turnNumber) {
-//
-//			turn -= 12;
-//			years++;
-////			Debug.Log (turn);
-//		}
+		int i = 0;
 
-		while (turn < m_maxTurns) {
+		while (i < turns) {
 
-			turn++;
-			months++;
+			i += 1;
+			months += 1;
 
-			if (months == 11) {
+			if (months == 12) {
 				months = 0;
-				years++;
+				years += 1;
 			}
-			//			Debug.Log (turn);
 		}
 
-		String s = years.ToString() + " Years and " + months.ToString() +  " Months Remain";
+		String s = "";
+		if (years > 0) {
+
+			s += years.ToString () + " Year";
+
+			if (years > 1) {
+
+				s += "s";
+			}
+		}
+
+		if (months > 0) {
+
+			if (years > 0) {
+
+				s += " ";
+			}
+
+			s += months.ToString () + " Month";
+
+			if (months > 1) {
+
+				s += "s";
+			}
+		}
+
+		s += " Remain";
 		return s;
 	}
 

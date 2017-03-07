@@ -57,8 +57,8 @@ public class AudioManager : MonoBehaviour {
 	public AudioClip m_buttonClick;
 	public AudioClip m_reelectionSting;
 
-	private float m_sfxVolume = 1.0f;
-	private float m_musicVolume = 1.0f;
+	private float m_sfxVolume = 0.5f;
+	private float m_musicVolume = 0.5f;
 
 	void Awake ()
 	{
@@ -67,6 +67,28 @@ public class AudioManager : MonoBehaviour {
 		} else {
 			Destroy(gameObject);
 		}
+	}
+
+	void Start ()
+	{
+		if (!GameManager.instance.m_demoMode) {
+			m_musicVolume = PlayerPrefs.GetFloat ("MusicVolume");
+			m_sfxVolume = PlayerPrefs.GetFloat ("SFXVolume");
+		}
+
+		MusicVolumeChanged (m_musicVolume);
+		SFXVolumeChanged (m_sfxVolume);
+	}
+
+	public void MusicVolumeChanged (float newVolume)
+	{
+		m_musicVolume = newVolume;
+		m_musicSource.volume = m_musicVolume;
+	}
+
+	public void SFXVolumeChanged (float newVolume)
+	{
+		m_sfxVolume = newVolume;
 	}
 
 	public void PlaySound (SoundType s)
@@ -206,4 +228,7 @@ public class AudioManager : MonoBehaviour {
 			m_sfxSource.PlayOneShot (a, volume);
 		}
 	}
+
+	public float musicVolume {get{return m_musicVolume;}}
+	public float sfxVolume {get{return m_sfxVolume;}}
 }

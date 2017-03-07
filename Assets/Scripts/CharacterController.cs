@@ -39,6 +39,8 @@ public class CharacterController : MonoBehaviour {
 	private Transform m_currentHead = null;
 	private FaceState m_currentFaceState = FaceState.Normal;
 
+	private Stat m_highestStat = null;
+
 	void Awake ()
 	{
 		if(!instance) {
@@ -97,43 +99,58 @@ public class CharacterController : MonoBehaviour {
 
 		foreach (Stat s in MenuState_GameState.instance.stats) {
 
-			int dist = 100;
+			if (m_highestStat == null) {
 
-			if (s.currentScore >= 50) {
+				m_highestStat = s;
 
-				dist = 100 - s.currentScore;
 			} else {
-				dist = s.currentScore;
-			}
 
-			if (dist < distanceToGameOver) {
+				int dist1 = 100;
+				int dist2 = 100;
 
-				distanceToGameOver = dist;
+				if (m_highestStat.currentScore >= 50) {
+
+					dist1 = m_highestStat.currentScore;
+				} else {
+					dist1 = 100 - m_highestStat.currentScore;
+				}
+
+				if (s.currentScore >= 50) {
+
+					dist2 = s.currentScore;
+				} else {
+					dist2 = 100 - s.currentScore;
+				}
+
+				if (dist2 > dist1) {
+
+					m_highestStat = s;
+				}
 			}
 		}
 
-		if (distanceToGameOver >= 30) {
-			
-			m_currentHead = m_heads [0];
-			m_currentFaceState = FaceState.Normal;
-
-		} else if (distanceToGameOver >= 24) {
-			
-			m_currentHead = m_heads [1];
-			m_currentFaceState = FaceState.Uncertain;
-
-		} else if (distanceToGameOver >= 16) {
-
-			m_currentHead = m_heads [2];
-			m_currentFaceState = FaceState.Distraught;
-
-		}
-		else if (distanceToGameOver >= 8) {
+		if (m_highestStat.currentScore == 10) {
 			
 			m_currentHead = m_heads [4];
 			m_currentFaceState = FaceState.Anger;
 
-		} else {
+		} else if (m_highestStat.currentScore == 30) {
+			
+			m_currentHead = m_heads [1];
+			m_currentFaceState = FaceState.Uncertain;
+
+		} else if (m_highestStat.currentScore == 50) {
+
+			m_currentHead = m_heads [0];
+			m_currentFaceState = FaceState.Normal;
+
+		}
+		else if (m_highestStat.currentScore == 70) {
+			
+			m_currentHead = m_heads [2];
+			m_currentFaceState = FaceState.Distraught;
+
+		} else if (m_highestStat.currentScore == 90) {
 			
 			m_currentHead = m_heads [5];
 			m_currentFaceState = FaceState.Fear;

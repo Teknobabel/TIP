@@ -29,7 +29,6 @@ public class Stat : ScriptableObject  {
 
 	public void UpdateValue (int amt)
 	{
-		Debug.Log (amt);
 		m_currentScore = Mathf.Clamp (m_currentScore + amt, 0, m_maxScore);
 		m_ui.UpdateStatValue (m_currentScore, true);
 	}

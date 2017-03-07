@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using TMPro;
+using UnityEngine.UI;
 
 public class MenuState_Pause_MacPC : MenuState {
 
@@ -8,18 +9,64 @@ public class MenuState_Pause_MacPC : MenuState {
 
 	public TextMeshProUGUI m_versionNumber;
 
+	public Slider m_musicVolumeSlider;
+	public Slider m_sfxVolumeSlider;
+
+	public Dropdown m_resolutionDropDown;
+
+	public TextMeshProUGUI m_fullscreenButtonText;
+
 	private bool m_inputState = false;
+	private Resolution[] m_resolutions;
+
+	public void Start ()
+	{
+		// set dropdown values
+
+		m_resolutions = Screen.resolutions;
+
+		for (int i = 0; i < m_resolutions.Length; i++)
+		{
+			m_resolutionDropDown.options.Add (new Dropdown.OptionData (ResToString (m_resolutions [i])));
+
+			m_resolutionDropDown.value = i;
+
+			m_resolutionDropDown.onValueChanged.AddListener(delegate 
+				{ Screen.SetResolution(m_resolutions[m_resolutionDropDown.value].width, m_resolutions[m_resolutionDropDown.value].height, Screen.fullScreen);});
+		}
+
+		if (Screen.fullScreen) {
+
+			m_fullscreenButtonText.text = "EXIT FULLSCREEN";
+
+		} else {
+
+			m_fullscreenButtonText.text = "FULLSCREEN";
+		}
+	}
+
+	private string ResToString(Resolution res)
+	{
+		return res.width + " x " + res.height;
+	}
 
 	public override void OnActivate()
 	{
-		m_inputState = MenuState_GameState.instance.playerInputAllowed;
+		// pause gameplay animation
+
 		Time.timeScale = 0.0f;
 
+		m_inputState = MenuState_GameState.instance.playerInputAllowed;
 		MenuState_GameState.instance.playerInputAllowed = false;
 
 		m_pauseMenu.gameObject.SetActive (true);
 
 		m_versionNumber.text = GameManager.instance.versionNumber;
+
+		// set volume slider values
+
+		m_musicVolumeSlider.value = AudioManager.instance.musicVolume;
+		m_sfxVolumeSlider.value = AudioManager.instance.sfxVolume;
 	}
 
 	public override void OnHold()
@@ -44,6 +91,26 @@ public class MenuState_Pause_MacPC : MenuState {
 		}
 
 		Time.timeScale = 1.0f;
+
+		if (!GameManager.instance.m_demoMode) {
+
+			PlayerPrefs.SetFloat ("MusicVolume", AudioManager.instance.musicVolume);
+			PlayerPrefs.SetFloat ("SFXVolume", AudioManager.instance.sfxVolume);
+
+			if (Screen.fullScreen) {
+
+				PlayerPrefs.SetInt ("FullscreenState", 0);
+
+			} else {
+
+				PlayerPrefs.SetInt ("FullscreenState", 1);
+			}
+				
+//			PlayerPrefs.SetInt ("ResolutionState_Width", Screen.width);
+//			PlayerPrefs.SetInt ("ResolutionState_Height", Screen.height);
+
+			PlayerPrefs.Save ();
+		}
 	}
 
 	public override void OnUpdate()
@@ -74,15 +141,15 @@ public class MenuState_Pause_MacPC : MenuState {
 
 	public void FullscreenButtonPressed () {
 
-		int fullscreenState = PlayerPrefs.GetInt ("FullscreenState");
+		Screen.fullScreen = !Screen.fullScreen;
 
-		if (fullscreenState == 0) {
+		if (Screen.fullScreen) {
+			
+			m_fullscreenButtonText.text = "FULLSCREEN";
 
-			GameManager.instance.SetFullscreenState (false, true);
+		} else {
 
-		} else if (fullscreenState == 1) {
-
-			GameManager.instance.SetFullscreenState (true, true);
+			m_fullscreenButtonText.text = "EXIT FULLSCREEN";
 		}
 	}
 }
