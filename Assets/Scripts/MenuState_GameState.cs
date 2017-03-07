@@ -1491,7 +1491,7 @@ public class MenuState_GameState : MenuState {
 		if (m_gameState != GameState.GameOver) {
 
 			#if UNITY_IOS
-			GameManager.instance.PushMenuState (State.Pause_MacPC);
+			GameManager.instance.PushMenuState (State.Pause);
 			#else
 			GameManager.instance.PushMenuState (State.Pause_MacPC);
 			#endif

@@ -127,6 +127,15 @@ public class GameManager : MonoBehaviour {
 		DOTween.Init ();
 
 		if (!m_skipIntro) {
+
+			float w = Screen.width;
+			float h = Screen.height;
+
+			if (w / h < 1.5f) {
+
+				m_titleText.fontSize = 64.0f;
+			}
+
 			PushMenuState (MenuState.State.MainMenu);
 		} else {
 			PushMenuState (MenuState.State.GameState);
@@ -137,7 +146,7 @@ public class GameManager : MonoBehaviour {
 	{
 		float w = Screen.width;
 		float h = Screen.height;
-		Debug.Log (w / h);
+//		Debug.Log (w / h);
 		if (w / h < 1.5f) {
 
 			// move to 4x3 positions
@@ -145,18 +154,16 @@ public class GameManager : MonoBehaviour {
 			m_shiftableObjectTransforms [0].position = new Vector3 (-6.4f, -1.8f, 3.84f);
 			m_shiftableObjectTransforms [1].position = new Vector3 (-6.4f, 2.9f, 3.84f);
 
-			m_shiftableObjectTransforms [2].position = new Vector3 (-2.5f, 3.6f, 0.0f);
-			m_shiftableObjectTransforms [3].position = new Vector3 (-1.9f, -0.2f, 0.0f);
+			m_shiftableObjectTransforms [2].position = new Vector3 (-2.5f, 3.31f, 0.0f);
+			m_shiftableObjectTransforms [3].position = new Vector3 (-1.9f, -0.74f, 0.0f);
 
 			m_shiftableObjectTransforms [4].position = new Vector3 (5.7f, 3.8f, 0.0f);
 			m_shiftableObjectTransforms [5].position = new Vector3 (5.7f, -0.2f, 0.0f);
 
-			m_titleText.fontSize = 64.0f;
-
-			foreach (RawImage r in m_curtains) {
-
-				r.texture = m_4by3Curtains;
-			}
+//			foreach (RawImage r in m_curtains) {
+//
+//				r.texture = m_4by3Curtains;
+//			}
 
 		} else {
 
@@ -171,12 +178,12 @@ public class GameManager : MonoBehaviour {
 			m_shiftableObjectTransforms [4].position = new Vector3 (7.19f, 3.8f, 0.0f);
 			m_shiftableObjectTransforms [5].position = new Vector3 (7.19f, -0.2f, 0.0f);
 
-			m_titleText.fontSize = 76.0f;
-
-			foreach (RawImage r in m_curtains) {
-
-				r.texture = m_16by9Curtains ;
-			}
+//			m_titleText.fontSize = 76.0f;
+//
+//			foreach (RawImage r in m_curtains) {
+//
+//				r.texture = m_16by9Curtains ;
+//			}
 		}
 	}
 		

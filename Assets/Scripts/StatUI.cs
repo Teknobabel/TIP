@@ -13,6 +13,13 @@ public class StatUI : MonoBehaviour {
 		Decrease,
 	}
 
+	public enum StatState
+	{
+		Normal,
+		Threatened,
+		GameOver,
+	}
+
 	public RectTransform m_progressBar_Fill;
 
 	public RawImage 
@@ -28,6 +35,8 @@ public class StatUI : MonoBehaviour {
 	public TextMeshProUGUI m_statname;
 
 	public Stat m_stat;
+
+	private StatState m_state = StatState.Normal;
 
 	public void UpdateStatValue (int newValue, bool doAnimate)
 	{
@@ -45,6 +54,36 @@ public class StatUI : MonoBehaviour {
 			m_progressBar_Fill.sizeDelta = new Vector2 (m_progressBar_Fill.sizeDelta.x, newHeight);
 		}
 
+//		Debug.Log (m_state + " / " + m_stat.currentScore);
+
+		if (m_stat.currentScore == 0 || m_stat.currentScore == 100) {
+			SetState (StatState.GameOver);
+		}
+		else if (m_stat.currentScore == 90 || m_stat.currentScore == 10)
+		{
+			SetState (StatState.Threatened);
+
+		} else if (m_stat.currentScore > 10 && m_stat.currentScore < 90)
+		{
+			SetState (StatState.Normal);
+		}
+	}
+
+	private void SetState (StatState s)
+	{
+		Debug.Log ("Setting State: " + s);
+		m_state = s;
+
+		switch (s) {
+
+		case StatState.GameOver:
+		case StatState.Normal:
+			m_icon.color = Color.black;
+			break;
+		case StatState.Threatened:
+			m_icon.color = Color.red;
+			break;
+		}
 	}
 
 	public void SetBorderColor (Color newColor)
@@ -54,7 +93,7 @@ public class StatUI : MonoBehaviour {
 
 	public void SetColor (Color newColor)
 	{
-		m_icon.color = newColor;
+//		m_icon.color = newColor;
 		m_progressBar.color = newColor;
 		m_iconBorder.color = newColor;
 
