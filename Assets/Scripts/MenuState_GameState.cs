@@ -41,11 +41,13 @@ public class MenuState_GameState : MenuState {
 
 	public GameObject 
 	m_statOBJ,
+	m_statOBJ_LargeScreen,
 	m_tweetOBJ,
 	m_timelineOBJ;
 
 	public Transform
 	m_statPanel,
+	m_statPanel_LargeScreen,
 	m_tweetPanel,
 	m_timelinePanel,
 	m_introPanel,
@@ -153,13 +155,58 @@ public class MenuState_GameState : MenuState {
 			s.m_name = thisStat.m_name;
 			s.m_category = thisStat.m_category;
 
-			// create UI
-			GameObject uiOBJ = (GameObject) Instantiate(m_statOBJ, m_statPanel);
-			uiOBJ.transform.localScale = Vector3.one;
-			StatUI st = (StatUI)uiOBJ.GetComponent<StatUI> ();
+			// create stat UI objects, size based on current platform and screen size
 
-			s.Initialize (st );
-			m_stats.Add (s);
+			bool largeScreenFormat = false;
+
+			#if UNITY_IOS
+
+			float w = Screen.width;
+			float h = Screen.height;
+
+			if (w / h < 1.5f) {
+
+				largeScreenFormat = true;
+			}
+//			if(UnityEngine.iOS.Device.generation == UnityEngine.iOS.DeviceGeneration.iPad1Gen || 
+//				UnityEngine.iOS.Device.generation == UnityEngine.iOS.DeviceGeneration.iPad2Gen || 
+//				UnityEngine.iOS.Device.generation == UnityEngine.iOS.DeviceGeneration.iPadMini3Gen || 
+//				UnityEngine.iOS.Device.generation == UnityEngine.iOS.DeviceGeneration.iPad4Gen || 
+//				UnityEngine.iOS.Device.generation == UnityEngine.iOS.DeviceGeneration.iPadAir1 || 
+//				UnityEngine.iOS.Device.generation == UnityEngine.iOS.DeviceGeneration.iPadAir2 || 
+//				UnityEngine.iOS.Device.generation == UnityEngine.iOS.DeviceGeneration.iPadMini1Gen || 
+//				UnityEngine.iOS.Device.generation == UnityEngine.iOS.DeviceGeneration.iPadMini2Gen || 
+//				UnityEngine.iOS.Device.generation == UnityEngine.iOS.DeviceGeneration.iPadMini3Gen || 
+//				UnityEngine.iOS.Device.generation == UnityEngine.iOS.DeviceGeneration.iPadMini4Gen || 
+//				UnityEngine.iOS.Device.generation == UnityEngine.iOS.DeviceGeneration.iPadPro10Inch1Gen || 
+//				UnityEngine.iOS.Device.generation == UnityEngine.iOS.DeviceGeneration.iPadPro1Gen || 
+//				UnityEngine.iOS.Device.generation == UnityEngine.iOS.DeviceGeneration.iPadUnknown)
+//			{
+//				largeScreenFormat = true;
+//			}
+
+			#else
+
+			largeScreenFormat = true;
+
+			#endif
+
+			if (largeScreenFormat) {
+				
+				GameObject uiOBJ = (GameObject)Instantiate (m_statOBJ_LargeScreen, m_statPanel_LargeScreen);
+				uiOBJ.transform.localScale = Vector3.one;
+				StatUI st = (StatUI)uiOBJ.GetComponent<StatUI> ();
+				s.Initialize (st);
+				m_stats.Add (s);
+
+			} else {
+
+				GameObject uiOBJ = (GameObject) Instantiate(m_statOBJ, m_statPanel);
+				uiOBJ.transform.localScale = Vector3.one;
+				StatUI st = (StatUI)uiOBJ.GetComponent<StatUI> ();
+				s.Initialize (st);
+				m_stats.Add (s);
+			}
 
 		}
 

@@ -30,6 +30,8 @@ public class GameManager : MonoBehaviour {
 	public Texture m_16by9Curtains;
 	public TextMeshProUGUI m_titleText;
 
+	public Transform m_gameplayCamera;
+
 	private MenuState m_menuState = null;
 	private List<MenuState> m_menuStateStack = new List<MenuState>();
 
@@ -151,14 +153,17 @@ public class GameManager : MonoBehaviour {
 
 			// move to 4x3 positions
 
-			m_shiftableObjectTransforms [0].position = new Vector3 (-6.4f, -1.8f, 3.84f);
-			m_shiftableObjectTransforms [1].position = new Vector3 (-6.4f, 2.9f, 3.84f);
+			Vector3 newPos = new Vector3 (-0.23f, 1.0f, -12.02f);
+			m_gameplayCamera.position = newPos;
 
-			m_shiftableObjectTransforms [2].position = new Vector3 (-2.5f, 3.31f, 0.0f);
-			m_shiftableObjectTransforms [3].position = new Vector3 (-1.9f, -0.74f, 0.0f);
-
-			m_shiftableObjectTransforms [4].position = new Vector3 (5.7f, 3.8f, 0.0f);
-			m_shiftableObjectTransforms [5].position = new Vector3 (5.7f, -0.2f, 0.0f);
+//			m_shiftableObjectTransforms [0].position = new Vector3 (-6.4f, -1.8f, 3.84f);
+//			m_shiftableObjectTransforms [1].position = new Vector3 (-6.4f, 2.9f, 3.84f);
+//
+//			m_shiftableObjectTransforms [2].position = new Vector3 (-2.5f, 3.31f, 0.0f);
+//			m_shiftableObjectTransforms [3].position = new Vector3 (-1.9f, -0.74f, 0.0f);
+//
+//			m_shiftableObjectTransforms [4].position = new Vector3 (5.7f, 3.8f, 0.0f);
+//			m_shiftableObjectTransforms [5].position = new Vector3 (5.7f, -0.2f, 0.0f);
 
 //			foreach (RawImage r in m_curtains) {
 //
@@ -169,14 +174,17 @@ public class GameManager : MonoBehaviour {
 
 			// move to 16x9 positions
 
-			m_shiftableObjectTransforms [0].position = new Vector3 (-8.39f, -1.8f, 3.84f);
-			m_shiftableObjectTransforms [1].position = new Vector3 (-8.36f, 2.9f, 3.84f);
+			Vector3 newPos = new Vector3 (0.0f, 1.0f, -10.0f);
+			m_gameplayCamera.position = newPos;
 
-			m_shiftableObjectTransforms [2].position = new Vector3 (-1.51f, 3.21f, 0.0f);
-			m_shiftableObjectTransforms [3].position = new Vector3 (-0.97f, -0.74f, 0.0f);
-
-			m_shiftableObjectTransforms [4].position = new Vector3 (7.19f, 3.8f, 0.0f);
-			m_shiftableObjectTransforms [5].position = new Vector3 (7.19f, -0.2f, 0.0f);
+//			m_shiftableObjectTransforms [0].position = new Vector3 (-8.39f, -1.8f, 3.84f);
+//			m_shiftableObjectTransforms [1].position = new Vector3 (-8.36f, 2.9f, 3.84f);
+//
+//			m_shiftableObjectTransforms [2].position = new Vector3 (-1.51f, 3.21f, 0.0f);
+//			m_shiftableObjectTransforms [3].position = new Vector3 (-0.97f, -0.74f, 0.0f);
+//
+//			m_shiftableObjectTransforms [4].position = new Vector3 (7.19f, 3.8f, 0.0f);
+//			m_shiftableObjectTransforms [5].position = new Vector3 (7.19f, -0.2f, 0.0f);
 
 //			m_titleText.fontSize = 76.0f;
 //
